@@ -26,7 +26,6 @@ export class MoosmailProvider {
     };
 
     setTimeout(function(){
-      alert("bbb");
       ws.send('NODE_REPORT');
     }, 1000);
   }
