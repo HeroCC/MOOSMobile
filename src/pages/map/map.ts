@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {Events, NavController} from 'ionic-angular';
 import {
   GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, GoogleMapsMapTypeId, LatLng, Marker
 } from "@ionic-native/google-maps";
+import {MoosmailProvider} from "../../providers/moosmail/moosmail";
 
 @Component({
   selector: 'page-map',
@@ -10,23 +11,17 @@ import {
 })
 export class MapPage {
   map: GoogleMap;
-  moosReports: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
   mapMarkers: Map<string, Marker> = new Map<string, Marker>();
 
-  constructor(public navCtrl: NavController, private gmaps: GoogleMaps) {
+  constructor(public navCtrl: NavController, private gmaps: GoogleMaps, public events: Events) {
+    events.subscribe('moosmail:received:NODE_REPORT', (varsMap: Map<string, string>) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      this.updateMarkers(varsMap);
+    });
   }
 
-  processNodeReport(value) {
-    const pairs = value.split(",");
-    let thisVars = new Map();
-    for (let i = 0; i < pairs.length; i++) {
-      const key = pairs[i].split("=")[0];
-      value = pairs[i].split("=")[1];
-      thisVars.set(key, value);
-    }
-    const name: string = thisVars.get("NAME");
-    this.moosReports.set(name, thisVars);
-
+  updateMarkers(newThing?: Map<string, string>) {
+    const name: string = newThing.get("NAME");
     if (this.mapMarkers.get(name) == null) {
       this.map.addMarker({
         title: name,
@@ -34,19 +29,26 @@ export class MapPage {
         //snippet: "some useful details here",
         //animation: plugin.google.maps.Animation.BOUNCE
       }).then((marker: Marker) => {
-        this.mapMarkers.set(name, marker)
+        this.mapMarkers.set(name, marker);
+      });
+    }
+
+    if (newThing != null) {
+      this.updateMarker(this.mapMarkers.get(name), newThing);
+    } else {
+      this.mapMarkers.forEach((value: Marker, key: string) => {
+        this.updateMarker(value, MoosmailProvider.nodeReports.get(key));
       });
     }
   }
 
-  updateMarkers() {
-    this.mapMarkers.forEach((value: Marker, key: string) => {
-      const lat: number = parseFloat(this.moosReports.get(key).get("LAT"));
-      const long: number = parseFloat(this.moosReports.get(key).get("LON"));
-      const head: number = parseFloat(this.moosReports.get(key).get("HDG"));
-      value.setPosition(new LatLng(lat, long));
-      value.setRotation(head);
-    });
+  updateMarker(marker: Marker, nodeReport: Map<string, string>) {
+    if (marker == null || nodeReport == null) return;
+    const lat: number = parseFloat(nodeReport.get("LAT"));
+    const long: number = parseFloat(nodeReport.get("LON"));
+    const head: number = parseFloat(nodeReport.get("HDG"));
+    marker.setPosition(new LatLng(lat, long));
+    marker.setRotation(head);
   }
 
 
@@ -67,20 +69,7 @@ export class MapPage {
 
     // Wait the MAP_READY before using any methods.
     this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
-      let ws: WebSocket = new WebSocket("ws://10.0.0.20:9090/listen");
-      ws.onmessage = (evt) => {
-        const origString = evt.data;
-        const key = origString.split("=")[0];
-        const val = origString.slice(origString.indexOf("=") + 1);
-        if (key == 'NODE_REPORT') {
-          this.processNodeReport(val);
-        }
-        this.updateMarkers();
-      };
 
-      setTimeout(function(){
-        ws.send('NODE_REPORT');
-      }, 1000);
     });
   }
 

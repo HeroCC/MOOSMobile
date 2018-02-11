@@ -11,6 +11,7 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import {GoogleMaps} from "@ionic-native/google-maps";
+import { MoosmailProvider } from '../providers/moosmail/moosmail';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import {GoogleMaps} from "@ionic-native/google-maps";
     StatusBar,
     SplashScreen,
     GoogleMaps,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    MoosmailProvider
   ]
 })
 export class AppModule {}
