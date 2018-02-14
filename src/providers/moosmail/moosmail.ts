@@ -1,33 +1,16 @@
-import { Injectable } from '@angular/core';
-import {Observable} from "rxjs/Observable";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {LatLng, Marker} from "@ionic-native/google-maps";
-import {MapPage} from "../../pages/map/map";
-import {TabsPage} from "../../pages/tabs/tabs";
+import {Injectable} from '@angular/core';
 import {Events} from "ionic-angular";
+import {MoosClient} from "./MoosClient";
 
 @Injectable()
 export class MoosmailProvider {
-  //public ws: WebSocket = new WebSocket("ws://10.0.0.20:9090/listen");
+  public static events: Events; // Allow other classes to be able to use events without including it in constructor
+  public static knownClients: Map<string, MoosClient> = new Map();
 
-  public static nodeReports: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
-
-  constructor(public events: Events) {
-    let ws: WebSocket = new WebSocket("ws://10.0.0.20:9090/listen");
-    ws.onmessage = (evt) => {
-      const origString = evt.data;
-      const key = origString.split("=")[0];
-      const val = origString.slice(origString.indexOf("=") + 1);
-      if (key == 'NODE_REPORT') {
-        let thisVars: Map<string, string> = MoosmailProvider.processMailString(val);
-        MoosmailProvider.nodeReports.set(thisVars.get("NAME"), thisVars);
-        this.events.publish('moosmail:received:' + key, thisVars);
-      }
-    };
-
-    setTimeout(function(){
-      ws.send('NODE_REPORT');
-    }, 1000);
+  constructor(public e: Events) {
+    MoosmailProvider.events = e;
+    MoosmailProvider.knownClients.set("shoreside", new MoosClient(new WebSocket("ws://10.0.0.20:9090/listen")));
+    MoosmailProvider.knownClients.get("shoreside").name = "shoreside";
   }
 
   static processMailString(value): Map<string, string> {
@@ -38,7 +21,6 @@ export class MoosmailProvider {
         value = pairs[i].split("=")[1];
         thisVars.set(key, value);
       }
-
       return thisVars;
   }
 }

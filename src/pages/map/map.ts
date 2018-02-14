@@ -1,7 +1,13 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {Events, NavController} from 'ionic-angular';
 import {
-  GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, GoogleMapsMapTypeId, LatLng, Marker
+  GoogleMap,
+  GoogleMapOptions,
+  GoogleMaps,
+  GoogleMapsEvent,
+  GoogleMapsMapTypeId,
+  LatLng,
+  Marker
 } from "@ionic-native/google-maps";
 import {MoosmailProvider} from "../../providers/moosmail/moosmail";
 
@@ -13,14 +19,13 @@ export class MapPage {
   map: GoogleMap;
   mapMarkers: Map<string, Marker> = new Map<string, Marker>();
 
-  constructor(public navCtrl: NavController, private gmaps: GoogleMaps, public events: Events) {
-    events.subscribe('moosmail:received:NODE_REPORT', (varsMap: Map<string, string>) => {
-      // user and time are the same arguments passed in `events.publish(user, time)`
-      this.updateMarkers(varsMap);
+  constructor(public navCtrl: NavController, public events: Events) {
+    events.subscribe('moosmail:received:NODE_REPORT', (varsMap: string) => {
+      this.updateMarkers(MoosmailProvider.processMailString(varsMap));
     });
   }
 
-  updateMarkers(newThing?: Map<string, string>) {
+  updateMarkers(newThing: Map<string, string>) {
     const name: string = newThing.get("NAME");
     if (this.mapMarkers.get(name) == null) {
       this.map.addMarker({
@@ -32,17 +37,10 @@ export class MapPage {
         this.mapMarkers.set(name, marker);
       });
     }
-
-    if (newThing != null) {
-      this.updateMarker(this.mapMarkers.get(name), newThing);
-    } else {
-      this.mapMarkers.forEach((value: Marker, key: string) => {
-        this.updateMarker(value, MoosmailProvider.nodeReports.get(key));
-      });
-    }
+    MapPage.updateMarker(this.mapMarkers.get(name), newThing);
   }
 
-  updateMarker(marker: Marker, nodeReport: Map<string, string>) {
+  static updateMarker(marker: Marker, nodeReport: Map<string, string>) {
     if (marker == null || nodeReport == null) return;
     const lat: number = parseFloat(nodeReport.get("LAT"));
     const long: number = parseFloat(nodeReport.get("LON"));
