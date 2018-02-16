@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Events, NavController} from 'ionic-angular';
+import {NavController} from 'ionic-angular';
 import {
   GoogleMap,
   GoogleMapOptions,
@@ -19,9 +19,13 @@ export class MapPage {
   map: GoogleMap;
   mapMarkers: Map<string, Marker> = new Map<string, Marker>();
 
-  constructor(public navCtrl: NavController, public events: Events) {
-    events.subscribe('moosmail:received:NODE_REPORT', (varsMap: string) => {
-      this.updateMarkers(MoosmailProvider.processMailString(varsMap));
+  constructor(public navCtrl: NavController, private mm: MoosmailProvider){
+    mm.newClientEmitter.subscribe((clientName: string) => {
+      mm.knownClients.get(clientName).mailEmitter.subscribe((mailName: string) => {
+        if (mailName == "NODE_REPORT") {
+          this.updateMarkers(MoosmailProvider.processMailString(mm.knownClients.get(clientName).receivedMail.get(mailName)));
+        }
+      });
     });
   }
 

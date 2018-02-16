@@ -5,12 +5,12 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-card *ngFor="let client of clients.keys()">
+  <ion-card *ngFor="let client of clients">
     <ion-card-header>
       {{client.name}}
     </ion-card-header>
-    <ion-card-content *ngFor="let mail of clients.get(client).keys()">
-      {{mail}} | {{clients.get(client).get(mail)}}
+    <ion-card-content *ngFor="let mail of client.receivedMail.keys()">
+      {{mail}} | {{client.receivedMail.get(mail)}}
     </ion-card-content>
   </ion-card>
 </ion-content>

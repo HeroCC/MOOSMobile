@@ -1,29 +1,20 @@
-import {MoosmailProvider} from "./moosmail";
+import {Subject} from "rxjs/Subject";
 
 export class MoosClient {
-  private _name: string;
   public receivedMail: Map<string, string> = new Map();
+  public mailEmitter = new Subject<string>();
 
-  constructor(public ws: WebSocket) {
+  constructor(public name: string, public ws: WebSocket) {
     this.ws.onmessage = (evt) => {
       const origString = evt.data;
       const key = origString.split("=")[0];
       const val = origString.slice(origString.indexOf("=") + 1);
       this.receivedMail.set(key, val);
-      MoosmailProvider.events.publish('moosmail:received', val, this, key);
-      MoosmailProvider.events.publish('moosmail:received:' + key, val, this, key);
+      this.mailEmitter.next(key);
     };
 
     this.ws.onopen = () => {
       this.ws.send("NODE_REPORT");
     }
-  }
-
-  get name(): string {
-    return this._name;
-  }
-
-  set name(value: string) {
-    this._name = value;
   }
 }

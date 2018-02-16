@@ -1,16 +1,20 @@
 import {Injectable} from '@angular/core';
-import {Events} from "ionic-angular";
 import {MoosClient} from "./MoosClient";
+import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class MoosmailProvider {
-  public static events: Events; // Allow other classes to be able to use events without including it in constructor
-  public static knownClients: Map<string, MoosClient> = new Map();
+  public knownClients: Map<string, MoosClient> = new Map();
+  public newClientEmitter = new Subject();
 
-  constructor(public e: Events) {
-    MoosmailProvider.events = e;
-    MoosmailProvider.knownClients.set("shoreside", new MoosClient(new WebSocket("ws://10.0.0.20:9090/listen")));
-    MoosmailProvider.knownClients.get("shoreside").name = "shoreside";
+  constructor() {
+    this.discoverNewClient("shoreside", "ws://10.0.0.20:9090/listen");
+  }
+
+  discoverNewClient(name: string, address: string) {
+    if (this.knownClients.get(name) != null) return;
+    this.knownClients.set(name, new MoosClient(name, new WebSocket(address)));
+    this.newClientEmitter.next(this.knownClients.get(name));
   }
 
   static processMailString(value): Map<string, string> {
