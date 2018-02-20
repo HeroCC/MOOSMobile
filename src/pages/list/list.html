@@ -9,8 +9,16 @@
     <ion-card-header>
       {{client.name}}
     </ion-card-header>
-    <ion-card-content *ngFor="let mail of client.receivedMail.keys()">
-      {{mail}} | {{client.receivedMail.get(mail)}}
+    <ion-card-content>
+      <ion-list>
+        <button ion-item *ngFor="let mail of this.getMapKeysAsArray(client.receivedMail)">
+          <b>{{mail}}</b> {{client.receivedMail.get(mail)}}
+        </button>
+        <button ion-item (click)="this.subscribeToNewMailPrompt(client)">
+          Subscribe to more mail...
+          <ion-icon item-end name="add"></ion-icon>
+        </button>
+      </ion-list>
     </ion-card-content>
   </ion-card>
 </ion-content>
