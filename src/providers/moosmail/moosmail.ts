@@ -6,6 +6,7 @@ import {Subject} from "rxjs/Subject";
 export class MoosmailProvider {
   public knownClients: Map<string, MoosClient> = new Map();
   public newClientEmitter = new Subject();
+  public static pauseUpdates = false;
 
   constructor() {
     this.discoverNewClient("shoreside", "ws://10.0.0.20:9090/listen");

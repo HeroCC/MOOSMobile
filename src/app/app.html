@@ -1,1 +1,8 @@
 <ion-nav [root]="rootPage"></ion-nav>
+
+<ion-fab bottom right>
+  <button ion-fab (click)="this.toggleMoosUpdates()">
+    <ion-icon name="pause" *ngIf="!this.pauseUpdates"></ion-icon>
+    <ion-icon name="play" *ngIf="this.pauseUpdates"></ion-icon>
+  </button>
+</ion-fab>

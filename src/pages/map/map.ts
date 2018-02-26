@@ -20,8 +20,16 @@ export class MapPage {
   mapMarkers: Map<string, Marker> = new Map<string, Marker>();
 
   constructor(public navCtrl: NavController, private mm: MoosmailProvider){
-    mm.newClientEmitter.subscribe((clientName: string) => {
-      mm.knownClients.get(clientName).mailEmitter.subscribe((mailName: string) => {
+    this.mm.knownClients.forEach((value, key) => {
+      value.mailEmitter.subscribe((mailName: string) => {
+        if (mailName == "NODE_REPORT") {
+          this.updateMarkers(MoosmailProvider.processMailString(value.receivedMail.get(mailName)));
+        }
+      });
+    });
+
+    this.mm.newClientEmitter.subscribe((clientName: string) => {
+      this.mm.knownClients.get(clientName).mailEmitter.subscribe((mailName: string) => {
         if (mailName == "NODE_REPORT") {
           this.updateMarkers(MoosmailProvider.processMailString(mm.knownClients.get(clientName).receivedMail.get(mailName)));
         }
