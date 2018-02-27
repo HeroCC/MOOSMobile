@@ -43,6 +43,7 @@ export class MapPage {
       this.map.addMarker({
         title: name,
         label: name.slice(0,1),
+        icon: 'assets/imgs/kayak.svg'
         //snippet: "some useful details here",
         //animation: plugin.google.maps.Animation.BOUNCE
       }).then((marker: Marker) => {
