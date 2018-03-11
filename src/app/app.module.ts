@@ -12,6 +12,7 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {GoogleMaps} from "@ionic-native/google-maps";
 import {MoosmailProvider} from '../providers/moosmail/moosmail';
+import {IonicStorageModule} from "@ionic/storage";
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import {MoosmailProvider} from '../providers/moosmail/moosmail';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [

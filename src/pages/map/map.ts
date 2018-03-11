@@ -10,6 +10,7 @@ import {
   Marker
 } from "@ionic-native/google-maps";
 import {MoosmailProvider} from "../../providers/moosmail/moosmail";
+import {MoosClient} from "../../providers/moosmail/MoosClient";
 
 @Component({
   selector: 'page-map',
@@ -28,10 +29,10 @@ export class MapPage {
       });
     });
 
-    this.mm.newClientEmitter.subscribe((clientName: string) => {
-      this.mm.knownClients.get(clientName).mailEmitter.subscribe((mailName: string) => {
+    this.mm.newClientEmitter.subscribe((client: MoosClient) => {
+      client.mailEmitter.subscribe((mailName: string) => {
         if (mailName == "NODE_REPORT") {
-          this.updateMarkers(MoosmailProvider.processMailString(mm.knownClients.get(clientName).receivedMail.get(mailName)));
+          this.updateMarkers(MoosmailProvider.processMailString(client.receivedMail.get(mailName)));
         }
       });
     });

@@ -9,9 +9,13 @@
 <ion-content>
   <ion-list no-border>
     <ion-list-header>Shoreside</ion-list-header>
-    <ion-item>
-      <ion-icon name="desktop" item-start></ion-icon>
-      <ion-input type="text" placeholder="IP Address" autocapitalize="none" value="10.0.0.20" required item-end></ion-input>
-    </ion-item>
+
+    <form (ngSubmit)="saveSettings()" [formGroup]="prefs">
+      <ion-item>
+        <ion-icon name="desktop" item-start></ion-icon>
+        <ion-input type="text" placeholder="Shoreside IP" autocapitalize="none" formControlName="shoresideAddress" item-end></ion-input>
+      </ion-item>
+      <button ion-button type="submit" full [disabled]="!prefs.valid">Submit</button>
+    </form>
   </ion-list>
 </ion-content>
