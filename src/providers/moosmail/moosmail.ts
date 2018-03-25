@@ -14,7 +14,7 @@ export class MoosmailProvider {
       if (value != "" && value != null) {
         this.discoverNewClient("shoreside", "ws://" + value + ":9090/listen");
       } else {
-        // In case the app isn't configured, use a default value. Tune this to be the
+        // In case the app isn't configured, use a default value. Tune this to be the real MIT shoreside address
         this.discoverNewClient("shoreside", "ws://10.0.0.20:9090/listen");
       }
     });

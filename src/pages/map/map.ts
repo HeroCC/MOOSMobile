@@ -10,7 +10,7 @@ import {
   Marker
 } from "@ionic-native/google-maps";
 import {MoosmailProvider} from "../../providers/moosmail/moosmail";
-import {MoosClient} from "../../providers/moosmail/MoosClient";
+import {MoosClient, MoosMail} from "../../providers/moosmail/MoosClient";
 
 @Component({
   selector: 'page-map',
@@ -21,30 +21,18 @@ export class MapPage {
   mapMarkers: Map<string, Marker> = new Map<string, Marker>();
 
   constructor(public navCtrl: NavController, private mm: MoosmailProvider){
-    this.mm.knownClients.forEach((value, key) => {
-      value.mailEmitter.subscribe((mailName: string) => {
-        if (mailName == "NODE_REPORT") {
-          this.updateMarkers(MoosmailProvider.processMailString(value.receivedMail.get(mailName)));
-        }
-      });
-    });
 
-    this.mm.newClientEmitter.subscribe((client: MoosClient) => {
-      client.mailEmitter.subscribe((mailName: string) => {
-        if (mailName == "NODE_REPORT") {
-          this.updateMarkers(MoosmailProvider.processMailString(client.receivedMail.get(mailName)));
-        }
-      });
-    });
   }
 
   updateMarkers(newThing: Map<string, string>) {
     const name: string = newThing.get("NAME");
     if (this.mapMarkers.get(name) == null) {
+      let iconUrl;
+      if (newThing.get("TYPE") == "KAYAK") iconUrl = 'assets/imgs/kayak.png';
       this.map.addMarker({
         title: name,
         label: name.slice(0,1),
-        icon: 'assets/imgs/kayak.svg'
+        icon: iconUrl
         //snippet: "some useful details here",
         //animation: plugin.google.maps.Animation.BOUNCE
       }).then((marker: Marker) => {
@@ -66,6 +54,9 @@ export class MapPage {
 
   initializeMap() {
     let mapOptions: GoogleMapOptions = {
+      controls: {
+        compass: true
+      },
       camera: {
         target: {
           lat: 43.825300,
@@ -81,11 +72,29 @@ export class MapPage {
 
     // Wait the MAP_READY before using any methods.
     this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
-
+      this.subscribeToMail();
     });
   }
 
   ionViewDidLoad() {
     this.initializeMap();
+  }
+
+  subscribeToMail() {
+    this.mm.knownClients.forEach((client: MoosClient, name: string) => {
+      client.mailEmitter.subscribe((mail: MoosMail) => {
+        if (mail.name == "NODE_REPORT") {
+          this.updateMarkers(MoosmailProvider.processMailString(mail.content));
+        }
+      });
+    });
+
+    this.mm.newClientEmitter.subscribe((client: MoosClient) => {
+      client.mailEmitter.subscribe((mail: MoosMail) => {
+        if (mail.name == "NODE_REPORT") {
+          this.updateMarkers(MoosmailProvider.processMailString(mail.content));
+        }
+      });
+    });
   }
 }
