@@ -2,7 +2,7 @@ import {Subject} from "rxjs/Subject";
 import {MoosmailProvider} from "./moosmail";
 
 export class MoosClient {
-  public ws: WebSocket;
+  private ws: WebSocket;
   public receivedMail: Map<string, MoosMail> = new Map();
   public mailEmitter = new Subject<MoosMail>();
 
@@ -22,6 +22,23 @@ export class MoosClient {
     this.ws.addEventListener('open', (evt => {
       this.ws.send("NODE_REPORT");
     }));
+  }
+
+  sendMessage(name: string, content: string) {
+    let mail = new MoosMail();
+    mail.name = name;
+    mail.content = content;
+    this.receivedMail.set(name, mail); // In case the message doesn't loop back with an update
+    this.ws.send(name); // If it isn't already, subscribe
+    this.ws.send(name + "=" + content); // Send the update
+  }
+
+  subscribe(name: string) {
+    let mail = new MoosMail();
+    mail.name = name;
+    mail.content = "";
+    this.receivedMail.set(name, mail);
+    this.ws.send(name);
   }
 }
 

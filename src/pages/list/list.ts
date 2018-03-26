@@ -31,6 +31,35 @@ export class ListPage {
     return result;
   }
 
+  editMailPrompt(client: MoosClient, mailName: string) {
+    let alert = this.alertCtrl.create({
+      title: 'Emit message to ' + mailName,
+      inputs: [
+        {
+          name: 'message',
+          placeholder: client.receivedMail.get(mailName).content
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Send',
+          handler: data => {
+            client.sendMessage(mailName, data.message);
+            return true;
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
   subscribeToNewMailPrompt(client: MoosClient) {
     let alert = this.alertCtrl.create({
       title: 'Subscribe to new mail',
@@ -51,7 +80,7 @@ export class ListPage {
         {
           text: 'Add',
           handler: data => {
-            client.ws.send(data.mail);
+            client.subscribe(data.mail);
             return true;
           }
         }
