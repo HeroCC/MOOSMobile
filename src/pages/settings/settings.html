@@ -15,6 +15,13 @@
         <ion-icon name="desktop" item-start></ion-icon>
         <ion-input type="text" placeholder="Shoreside IP" autocapitalize="none" formControlName="shoresideAddress" item-end></ion-input>
       </ion-item>
+      <ion-item>
+        <ion-icon name="pin" item-start></ion-icon>
+        <ion-select formControlName="mapLocation" icon-end>
+          <ion-option value="forest">Forest Lake</ion-option>
+          <ion-option value="mit">MIT Pavilion</ion-option>
+        </ion-select>
+      </ion-item>
       <button ion-button type="submit" full [disabled]="!prefs.valid">Submit</button>
     </form>
   </ion-list>

@@ -11,16 +11,21 @@ export class SettingsPage {
   private prefs: FormGroup = new FormGroup({});
 
   constructor(public navCtrl: NavController, private storage: Storage) {
-    this.initPref("shoresideAddress");
+    this.initPref("shoresideAddress", "10.0.0.20");
+    this.initPref("mapLocation", "forest");
 
     navCtrl.viewWillLeave.subscribe(() => {
       this.saveSettings();
     });
   }
 
-  initPref(key) {
+  initPref(key, defaultValue: string) {
     this.prefs.addControl(key, new FormControl('', [Validators.required]));
     this.storage.get("prefs." + key).then(value => {
+      if (value == "" || value == null) {
+        value = defaultValue;
+        this.storage.set("prefs." + key, defaultValue);
+      }
       this.prefs.controls[key].setValue(value);
     });
   }
@@ -29,5 +34,6 @@ export class SettingsPage {
     for (let key in this.prefs.controls) {
       this.storage.set("prefs." + key, this.prefs.get(key).value);
     }
+    alert("Saved! You may need to restart the app for settings to take affect");
   }
 }

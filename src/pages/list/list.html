@@ -11,8 +11,8 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <button ion-item *ngFor="let mail of this.getMapKeysAsArray(client.receivedMail)" (click)="this.editMailPrompt(client, mail)">
-          <b>{{mail}}</b> {{client.receivedMail.get(mail).content}}
+        <button ion-item *ngFor="let mail of this.getMapValuesAsArray(client.receivedMail)" (click)="this.editMailPrompt(client, mail.name)">
+          <b>{{mail.name}}</b> {{mail.content}}
         </button>
         <button ion-item (click)="this.subscribeToNewMailPrompt(client)">
           Subscribe to more mail...
