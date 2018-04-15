@@ -1,13 +1,16 @@
 import {Subject} from "rxjs/Subject";
 import {MoosmailProvider} from "./moosmail";
+import ReconnectingWebsocket from "reconnecting-websocket";
 
 export class MoosClient {
-  public readonly ws: WebSocket;
+  public readonly ws: ReconnectingWebsocket;
   public receivedMail: Map<string, MoosMail> = new Map();
   public mailEmitter = new Subject<MoosMail>();
 
   constructor(public name: string, public address: string) {
-    this.ws = new WebSocket(address);
+    this.ws = new ReconnectingWebsocket(address); // See https://github.com/joewalnes/reconnecting-websocket
+    this.ws.reconnectInterval = 3000; // 3 Seconds
+    this.ws.maxReconnectInterval = 10000; // 10 Seconds
 
     this.ws.addEventListener('message', (evt => {
       if (MoosmailProvider.pauseUpdates) return;
