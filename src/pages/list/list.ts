@@ -88,4 +88,38 @@ export class ListPage {
     });
     alert.present();
   }
+
+  addNewClientPrompt() {
+    // This will be here until the automatic discovery code is finished
+    let alert = this.alertCtrl.create({
+      title: 'Listen for new client',
+      inputs: [
+        {
+          name: 'name',
+          placeholder: 'Name'
+        },
+        {
+          name: 'address',
+          placeholder: 'Address:Port'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Add',
+          handler: data => {
+            this.mm.discoverNewClient(data.name, "ws://" + data.address + "/listen");
+            return true;
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
 }

@@ -7,18 +7,24 @@
 <ion-content padding>
   <ion-card *ngFor="let client of clients">
     <ion-card-header>
-      {{client.name}}
+      <span [ngStyle]="client.ws.readyState != 1 && {'color': 'red'}">{{client.name}}</span>: <i>{{client.ws.url}}</i>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
         <button ion-item *ngFor="let mail of this.getMapValuesAsArray(client.receivedMail)" (click)="this.editMailPrompt(client, mail.name)">
           <b>{{mail.name}}</b> {{mail.content}}
         </button>
-        <button ion-item (click)="this.subscribeToNewMailPrompt(client)">
+        <button ion-item *ngIf="client.ws.readyState == 1" (click)="this.subscribeToNewMailPrompt(client)">
           Subscribe to more mail...
           <ion-icon item-end name="add"></ion-icon>
         </button>
       </ion-list>
     </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <button ion-item (click)="this.addNewClientPrompt()">
+      Add another client...
+      <ion-icon item-end name="add"></ion-icon>
+    </button>
   </ion-card>
 </ion-content>

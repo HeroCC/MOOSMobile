@@ -2,7 +2,7 @@ import {Subject} from "rxjs/Subject";
 import {MoosmailProvider} from "./moosmail";
 
 export class MoosClient {
-  private ws: WebSocket;
+  public readonly ws: WebSocket;
   public receivedMail: Map<string, MoosMail> = new Map();
   public mailEmitter = new Subject<MoosMail>();
 
