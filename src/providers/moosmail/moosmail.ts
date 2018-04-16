@@ -11,29 +11,26 @@ export class MoosmailProvider {
   public savedClients: {name, address}[] = [];
 
   constructor(private storage: Storage) {
-    this.storage.get("prefs.shoresideAddress").then((value) => {
-      if (value != "" && value != null) {
-        this.discoverNewClient("shoreside", "ws://" + value + ":9090/listen");
-      } else {
-        // In case the app isn't configured, use a default value. Tune this to be the real MIT shoreside address
-        this.discoverNewClient("shoreside", "ws://10.0.0.20:9090/listen");
-      }
-    });
-
     this.storage.get("rememberedClients").then((value => {
       if (value == null) return;
       this.savedClients = value;
       value.forEach((client => {
         this.discoverNewClient(client.name, client.address)
       }));
+
+      if (this.rememberedClientIndexByName("shoreside") == -1) {
+        // In case the app isn't configured, use a default value
+        this.rememberClient(this.discoverNewClient("shoreside", "ws://192.168.1.15:9090/listen"));
+      }
     }));
   }
 
   discoverNewClient(name: string, address: string) {
-    if (this.knownClients.get(name) != null) return;
+    //if (this.knownClients.get(name) != null) return;
     let client = new MoosClient(name, address);
     this.knownClients.set(name, client);
     this.newClientEmitter.next(client);
+    return client;
   }
 
   static processMailString(value): Map<string, string> {
@@ -47,6 +44,12 @@ export class MoosmailProvider {
       return thisVars;
   }
 
+  rememberedClientIndexByName(clientName: string): number {
+    return (this.savedClients.findIndex((value) => {
+      return value.name == clientName;
+    }));
+  }
+
   rememberedClientIndex(client: MoosClient): number {
     return (this.savedClients.findIndex((value) => {
       return value.name == client.name && value.address == client.address;
@@ -54,12 +57,13 @@ export class MoosmailProvider {
   }
 
   rememberClient(client: MoosClient) {
-    if (this.rememberedClientIndex(client) != -1) return;
+    this.forgetClient(client);
     this.savedClients.push({name: client.name, address: client.address});
     this.storage.set("rememberedClients", this.savedClients);
   }
 
   forgetClient(client: MoosClient) {
+    if (this.rememberedClientIndex(client) == -1) return;
     this.savedClients.splice(this.rememberedClientIndex(client), 1);
     this.storage.set("rememberedClients", this.savedClients);
   }

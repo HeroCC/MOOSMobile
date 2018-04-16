@@ -12,10 +12,6 @@
 
     <form (ngSubmit)="saveSettings()" [formGroup]="prefs">
       <ion-item>
-        <ion-icon name="desktop" item-start></ion-icon>
-        <ion-input type="text" placeholder="Shoreside IP" autocapitalize="none" formControlName="shoresideAddress" item-end></ion-input>
-      </ion-item>
-      <ion-item>
         <ion-icon name="pin" item-start></ion-icon>
         <ion-select formControlName="mapLocation" icon-end>
           <ion-option value="forest">Forest Lake</ion-option>

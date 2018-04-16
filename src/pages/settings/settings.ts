@@ -11,7 +11,6 @@ export class SettingsPage {
   private prefs: FormGroup = new FormGroup({});
 
   constructor(public navCtrl: NavController, private storage: Storage) {
-    this.initPref("shoresideAddress", "10.0.0.20");
     this.initPref("mapLocation", "forest");
 
     navCtrl.viewWillLeave.subscribe(() => {
