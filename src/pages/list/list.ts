@@ -80,6 +80,9 @@ export class ListPage {
         {
           text: 'Add',
           handler: data => {
+            if (client.receivedMail.get(data.mail) != null) {
+              client.receivedMail.get(data.mail).hiddenFromList = false;
+            }
             client.subscribe(data.mail);
             return true;
           }

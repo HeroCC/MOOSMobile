@@ -14,10 +14,15 @@ export class MoosClient {
 
     this.ws.addEventListener('message', (evt => {
       if (MoosmailProvider.pauseUpdates) return;
-      let mail = new MoosMail();
       const origString = evt.data;
-      mail.name = origString.split("=")[0];
+      const name = origString.split("=")[0];
+
+      let mail = new MoosMail();
+      if (this.receivedMail.get(name) != null) mail = this.receivedMail.get(name);
+      mail.name = name;
       mail.content = origString.slice(origString.indexOf("=") + 1);
+      mail.timestamp = Date.now();
+      if (mail.hiddenFromList == null) mail.hiddenFromList = false;
       this.receivedMail.set(mail.name, mail);
       this.mailEmitter.next(mail);
     }));
@@ -48,4 +53,6 @@ export class MoosClient {
 export class MoosMail {
   public name: string;
   public content: string;
+  public timestamp: number;
+  public hiddenFromList: boolean = false; // Users can unhide by resubscribing under the client card
 }

@@ -13,6 +13,7 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {GoogleMaps} from "@ionic-native/google-maps";
 import {MoosmailProvider} from '../providers/moosmail/moosmail';
 import {IonicStorageModule} from "@ionic/storage";
+import {MomentModule} from "ngx-moment";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {IonicStorageModule} from "@ionic/storage";
     TabsPage
   ],
   imports: [
+    MomentModule,
     BrowserModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot()
