@@ -7,7 +7,7 @@
 <ion-content padding>
   <ion-card *ngFor="let client of clients">
     <ion-card-header>
-      <span [ngStyle]="client.ws.readyState != 1 && {'color': '#f53d3d'}">{{client.name}}</span>: <i>{{client.ws.url}}</i>
+      <h2 [ngStyle]="client.ws.readyState != 1 && {'color': '#f53d3d'}">{{client.name}} <ion-note>{{client.ws.url}}</ion-note></h2>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
@@ -30,14 +30,34 @@
               <ion-icon name="trash"></ion-icon>
               Hide
             </button>
+            <button ion-button color="secondary" (click)="this.storage.set()">
+              <ion-icon name="archive"></ion-icon>
+              Save
+            </button>
           </ion-item-options>
         </ion-item-sliding>
-        <button ion-item *ngIf="client.ws.readyState == 1" (click)="this.subscribeToNewMailPrompt(client)">
-          Subscribe to more mail...
-          <ion-icon item-end name="add"></ion-icon>
-        </button>
       </ion-list>
     </ion-card-content>
+
+    <ion-row>
+      <ion-col>
+        <button ion-button icon-left clear small (click)="this.subscribeToNewMailPrompt(client)">
+          <ion-icon item-start name="add"></ion-icon>
+          Add more mail
+        </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button icon-left clear small (click)="this.mm.rememberClient(client)" *ngIf="this.mm.rememberedClientIndex(client) == -1">
+          <ion-icon name="archive"></ion-icon>
+          Save
+        </button>
+        <button ion-button icon-left clear small (click)="this.mm.forgetClient(client)" *ngIf="this.mm.rememberedClientIndex(client) != -1">
+          <ion-icon name="trash"></ion-icon>
+          Forget
+        </button>
+      </ion-col>
+    </ion-row>
+
   </ion-card>
   <ion-card>
     <button ion-item (click)="this.addNewClientPrompt()">

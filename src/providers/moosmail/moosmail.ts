@@ -8,6 +8,7 @@ export class MoosmailProvider {
   public knownClients: Map<string, MoosClient> = new Map();
   public newClientEmitter = new Subject();
   public static pauseUpdates = false;
+  public savedClients: {name, address}[] = [];
 
   constructor(private storage: Storage) {
     this.storage.get("prefs.shoresideAddress").then((value) => {
@@ -18,6 +19,14 @@ export class MoosmailProvider {
         this.discoverNewClient("shoreside", "ws://10.0.0.20:9090/listen");
       }
     });
+
+    this.storage.get("rememberedClients").then((value => {
+      if (value == null) return;
+      this.savedClients = value;
+      value.forEach((client => {
+        this.discoverNewClient(client.name, client.address)
+      }));
+    }));
   }
 
   discoverNewClient(name: string, address: string) {
@@ -36,6 +45,23 @@ export class MoosmailProvider {
         thisVars.set(key, value);
       }
       return thisVars;
+  }
+
+  rememberedClientIndex(client: MoosClient): number {
+    return (this.savedClients.findIndex((value) => {
+      return value.name == client.name && value.address == client.address;
+    }));
+  }
+
+  rememberClient(client: MoosClient) {
+    if (this.rememberedClientIndex(client) != -1) return;
+    this.savedClients.push({name: client.name, address: client.address});
+    this.storage.set("rememberedClients", this.savedClients);
+  }
+
+  forgetClient(client: MoosClient) {
+    this.savedClients.splice(this.rememberedClientIndex(client), 1);
+    this.storage.set("rememberedClients", this.savedClients);
   }
 
   /*
