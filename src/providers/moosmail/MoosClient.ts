@@ -45,6 +45,7 @@ export class MoosClient {
     let mail = new MoosMail();
     mail.name = name;
     mail.content = "";
+    mail.timestamp = 0;
     this.receivedMail.set(name, mail);
     this.ws.send(name);
   }
