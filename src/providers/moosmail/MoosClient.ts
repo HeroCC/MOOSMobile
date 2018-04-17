@@ -56,4 +56,5 @@ export class MoosMail {
   public content: string;
   public timestamp: number;
   public hiddenFromList: boolean = false; // Users can unhide by resubscribing under the client card
+  public expandOnList: boolean = false;
 }
