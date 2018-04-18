@@ -5,22 +5,23 @@ import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class MoosmailProvider {
+  public savedClients: Map<string, {name, address, savedMail}> = new Map();
   public knownClients: Map<string, MoosClient> = new Map();
   public newClientEmitter = new Subject();
   public static pauseUpdates = false;
-  public savedClients: {name, address}[] = [];
 
   constructor(private storage: Storage) {
     this.storage.get("rememberedClients").then((value => {
       if (value == null) return;
       this.savedClients = value;
       value.forEach((client => {
-        this.discoverNewClient(client.name, client.address)
+        // Client properties are recalled here
+        this.discoverNewClient(client.name, client.address).savedMail = client.savedMail;
       }));
 
-      if (this.rememberedClientIndexByName("shoreside") == -1) {
+      if (!this.knownClients.has("shoreside")) {
         // In case the app isn't configured, use a default value
-        this.rememberClient(this.discoverNewClient("shoreside", "ws://192.168.1.15:9090/listen"));
+        this.discoverNewClient("shoreside", "ws://192.168.1.15:9090/listen").remember(this);
       }
     }));
   }
@@ -34,37 +35,17 @@ export class MoosmailProvider {
   }
 
   static processMailString(value): Map<string, string> {
-      const pairs = value.split(",");
-      let thisVars: Map<string, string> = new Map();
-      for (let i = 0; i < pairs.length; i++) {
-        const key = pairs[i].split("=")[0];
-        value = pairs[i].split("=")[1];
-        thisVars.set(key, value);
-      }
-      return thisVars;
+    const pairs = value.split(",");
+    let thisVars: Map<string, string> = new Map();
+    for (let i = 0; i < pairs.length; i++) {
+      const key = pairs[i].split("=")[0];
+      value = pairs[i].split("=")[1];
+      thisVars.set(key, value);
+    }
+    return thisVars;
   }
 
-  rememberedClientIndexByName(clientName: string): number {
-    return (this.savedClients.findIndex((value) => {
-      return value.name == clientName;
-    }));
-  }
-
-  rememberedClientIndex(client: MoosClient): number {
-    return (this.savedClients.findIndex((value) => {
-      return value.name == client.name && value.address == client.address;
-    }));
-  }
-
-  rememberClient(client: MoosClient) {
-    this.forgetClient(client);
-    this.savedClients.push({name: client.name, address: client.address});
-    this.storage.set("rememberedClients", this.savedClients);
-  }
-
-  forgetClient(client: MoosClient) {
-    if (this.rememberedClientIndex(client) == -1) return;
-    this.savedClients.splice(this.rememberedClientIndex(client), 1);
+  resave() {
     this.storage.set("rememberedClients", this.savedClients);
   }
 

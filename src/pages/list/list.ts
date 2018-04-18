@@ -8,16 +8,7 @@ import {MoosmailProvider} from "../../providers/moosmail/moosmail";
   templateUrl: 'list.html'
 })
 export class ListPage {
-  clients: MoosClient[] = [];
-
   constructor(public navCtrl: NavController, public mm: MoosmailProvider, private alertCtrl: AlertController) {
-    this.mm.knownClients.forEach((value, key) => {
-      this.clients.push(value);
-    });
-
-    this.mm.newClientEmitter.subscribe((newClient: MoosClient) => {
-      this.clients.push(newClient);
-    });
   }
 
   getMapValuesAsArray(map: Map<any, any>) {
@@ -94,7 +85,7 @@ export class ListPage {
 
   addNewClientPrompt() {
     // This will be here until the automatic discovery code is finished
-    let alert = this.alertCtrl.create({
+    let prompt = this.alertCtrl.create({
       title: 'Listen for new client',
       inputs: [
         {
@@ -117,12 +108,16 @@ export class ListPage {
         {
           text: 'Add',
           handler: data => {
+            if (this.mm.savedClients.has(data.name)) {
+              alert("There is already a client saved with this name!");
+              return false;
+            }
             this.mm.discoverNewClient(data.name, "ws://" + data.address + "/listen");
             return true;
           }
         }
       ]
     });
-    alert.present();
+    prompt.present();
   }
 }

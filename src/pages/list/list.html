@@ -5,13 +5,13 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-card *ngFor="let client of clients">
+  <ion-card *ngFor="let client of getMapValuesAsArray(this.mm.knownClients)">
     <ion-card-header>
       <h2 [ngStyle]="client.ws.readyState != 1 && {'color': '#f53d3d'}">{{client.name}} <ion-note>{{client.ws.url}}</ion-note></h2>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item-sliding *ngFor="let mail of this.getMapValuesAsArray(client.receivedMail)" [ngStyle]="mail.hiddenFromList == true && {'display': 'none'}" (click)="mail.expandOnList = !mail.expandOnList">
+        <ion-item-sliding *ngFor="let mail of getMapValuesAsArray(client.receivedMail)" [ngStyle]="mail.hiddenFromList == true && {'display': 'none'}" (click)="mail.expandOnList = !mail.expandOnList">
           <ion-item item-start>
             <h2>
               {{mail.name}}
@@ -22,8 +22,8 @@
             <p>{{mail.content}}</p>
             <ion-grid *ngIf="mail.expandOnList">
               <ion-row *ngFor="let splitMail of mail.content.split(',')">
-                <ion-col col-1><b>{{splitMail.split("=")[0]}}</b></ion-col>
-                <ion-col col-6>{{splitMail.split("=")[1]}}</ion-col>
+                <ion-col><b>{{splitMail.split("=")[0]}}</b></ion-col>
+                <ion-col>{{splitMail.split("=")[1]}}</ion-col>
               </ion-row>
             </ion-grid>
           </ion-item>
@@ -35,6 +35,14 @@
             <button ion-button color="danger" (click)="mail.hiddenFromList = true">
               <ion-icon name="trash"></ion-icon>
               Hide
+            </button>
+            <button ion-button color="secondary" *ngIf="!client.savedMail.has(mail.name)" [disabled]="!client.isRemembered(this.mm)" (click)="client.savedMail.add(mail.name); client.remember(this.mm)">
+              <ion-icon name="archive"></ion-icon>
+              Save
+            </button>
+            <button ion-button color="warning" *ngIf="client.savedMail.has(mail.name)" (click)="client.savedMail.add(mail.name); client.remember(mm)">
+              <ion-icon name="archive"></ion-icon>
+              Unsave
             </button>
           </ion-item-options>
         </ion-item-sliding>
@@ -49,11 +57,11 @@
         </button>
       </ion-col>
       <ion-col>
-        <button ion-button icon-left clear small (click)="this.mm.rememberClient(client)" *ngIf="this.mm.rememberedClientIndex(client) == -1">
+        <button ion-button icon-left clear small (click)="client.remember(this.mm)" *ngIf="!client.isRemembered(this.mm)">
           <ion-icon name="archive"></ion-icon>
           Save
         </button>
-        <button ion-button icon-left clear small (click)="this.mm.forgetClient(client)" *ngIf="this.mm.rememberedClientIndex(client) != -1">
+        <button ion-button icon-left clear small (click)="client.forget(this.mm)" *ngIf="client.isRemembered(this.mm)">
           <ion-icon name="trash"></ion-icon>
           Forget
         </button>
