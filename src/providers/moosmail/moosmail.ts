@@ -7,7 +7,7 @@ import {Subject} from "rxjs/Subject";
 export class MoosmailProvider {
   public savedClients: Map<string, {name, address, savedMail}> = new Map();
   public knownClients: Map<string, MoosClient> = new Map();
-  public newClientEmitter = new Subject();
+  public newClientEmitter = new Subject<MoosClient>();
   public static pauseUpdates = false;
 
   constructor(private storage: Storage) {

@@ -2,13 +2,17 @@ import {Component} from '@angular/core';
 import {AlertController, NavController} from 'ionic-angular';
 import {MoosClient} from "../../providers/moosmail/MoosClient";
 import {MoosmailProvider} from "../../providers/moosmail/moosmail";
+import {PhonegapLocalNotification} from "@ionic-native/phonegap-local-notification";
 
 @Component({
   selector: 'page-list',
-  templateUrl: 'list.html'
+  templateUrl: 'mail.html'
 })
-export class ListPage {
-  constructor(public navCtrl: NavController, public mm: MoosmailProvider, private alertCtrl: AlertController) {
+export class MailPage {
+
+  constructor(public navCtrl: NavController, public mm: MoosmailProvider, private alertCtrl: AlertController,
+              public localNotification: PhonegapLocalNotification) {
+    this.localNotification.requestPermission();
   }
 
   getMapValuesAsArray(map: Map<any, any>) {

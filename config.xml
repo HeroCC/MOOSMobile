@@ -88,4 +88,5 @@
     </plugin>
     <content src="index.html" />
     <engine name="android" spec="~7.0.0" />
+    <plugin name="phonegap-plugin-local-notification" spec="^1.0.1" />
 </widget>

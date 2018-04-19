@@ -5,7 +5,7 @@ import {MyApp} from './app.component';
 
 import {MapPage} from '../pages/map/map';
 import {SettingsPage} from '../pages/settings/settings';
-import {ListPage} from '../pages/list/list';
+import {MailPage} from '../pages/mail/mail';
 import {TabsPage} from '../pages/tabs/tabs';
 
 import {StatusBar} from '@ionic-native/status-bar';
@@ -14,13 +14,16 @@ import {GoogleMaps} from "@ionic-native/google-maps";
 import {MoosmailProvider} from '../providers/moosmail/moosmail';
 import {IonicStorageModule} from "@ionic/storage";
 import {MomentModule} from "ngx-moment";
+import {AppcastPage} from "../pages/appcast/appcast";
+import {PhonegapLocalNotification} from "@ionic-native/phonegap-local-notification";
 
 @NgModule({
   declarations: [
     MyApp,
     MapPage,
+    AppcastPage,
     SettingsPage,
-    ListPage,
+    MailPage,
     TabsPage
   ],
   imports: [
@@ -33,14 +36,16 @@ import {MomentModule} from "ngx-moment";
   entryComponents: [
     MyApp,
     MapPage,
+    AppcastPage,
     SettingsPage,
-    ListPage,
+    MailPage,
     TabsPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     GoogleMaps,
+    PhonegapLocalNotification,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     MoosmailProvider
   ]

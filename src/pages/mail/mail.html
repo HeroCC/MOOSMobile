@@ -11,8 +11,8 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item-sliding *ngFor="let mail of getMapValuesAsArray(client.receivedMail)" [ngStyle]="mail.hiddenFromList == true && {'display': 'none'}" (click)="mail.expandOnList = !mail.expandOnList">
-          <ion-item item-start>
+        <ion-item-sliding *ngFor="let mail of getMapValuesAsArray(client.receivedMail)" [ngStyle]="mail.hiddenFromList == true && {'display': 'none'}">
+          <ion-item item-start (click)="mail.expandOnList = !mail.expandOnList">
             <h2>
               {{mail.name}}
               <ion-note>
@@ -32,10 +32,21 @@
               <ion-icon name="md-create"></ion-icon>
               Edit
             </button>
+
+            <button ion-button color="special" *ngIf="!mail.notifyOnUpdate" (click)="mail.notifyOnUpdate = !mail.notifyOnUpdate">
+              <ion-icon name="alert"></ion-icon>
+              Alert
+            </button>
+            <button ion-button color="special" *ngIf="mail.notifyOnUpdate" (click)="mail.notifyOnUpdate = !mail.notifyOnUpdate">
+              <ion-icon name="alert"></ion-icon>
+              Unalert
+            </button>
+
             <button ion-button color="danger" (click)="mail.hiddenFromList = true">
               <ion-icon name="trash"></ion-icon>
               Hide
             </button>
+
             <button ion-button color="secondary" *ngIf="!client.savedMail.has(mail.name)" [disabled]="!client.isRemembered(this.mm)" (click)="client.savedMail.add(mail.name); client.remember(this.mm)">
               <ion-icon name="archive"></ion-icon>
               Save

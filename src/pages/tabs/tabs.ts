@@ -2,7 +2,8 @@ import {Component} from '@angular/core';
 
 import {MapPage} from '../map/map';
 import {SettingsPage} from '../settings/settings';
-import {ListPage} from '../list/list';
+import {MailPage} from '../mail/mail';
+import {AppcastPage} from "../appcast/appcast";
 
 @Component({
   templateUrl: 'tabs.html'
@@ -10,8 +11,9 @@ import {ListPage} from '../list/list';
 export class TabsPage {
 
   tab1Root = MapPage;
-  tab2Root = ListPage;
-  tab3Root = SettingsPage;
+  tab2Root = MailPage;
+  tab3Root = AppcastPage;
+  tab4Root = SettingsPage;
 
   constructor() {
 

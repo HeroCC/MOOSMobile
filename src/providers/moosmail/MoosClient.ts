@@ -1,4 +1,5 @@
 import {Subject} from "rxjs/Subject";
+import {PhonegapLocalNotification} from '@ionic-native/phonegap-local-notification';
 import {MoosmailProvider} from "./moosmail";
 import ReconnectingWebsocket from "reconnecting-websocket";
 
@@ -9,6 +10,7 @@ export class MoosClient {
   public savedMail: Set<string> = new Set();
 
   constructor(public name: string, public address: string) {
+    let localNotification: PhonegapLocalNotification = new PhonegapLocalNotification();
     this.ws = new ReconnectingWebsocket(address); // See https://github.com/joewalnes/reconnecting-websocket
     this.ws.reconnectInterval = 3000; // 3 Seconds
     this.ws.maxReconnectInterval = 10000; // 10 Seconds
@@ -24,6 +26,12 @@ export class MoosClient {
       mail.content = origString.slice(origString.indexOf("=") + 1);
       mail.timestamp = Date.now();
       if (mail.hiddenFromList == null) mail.hiddenFromList = false;
+      if (mail.notifyOnUpdate){
+        localNotification.create(mail.name + " has changed", {
+          body: "Now set to " + mail.content,
+          tag: "mailUpdate"
+        });
+      }
       this.receivedMail.set(mail.name, mail);
       this.mailEmitter.next(mail);
     }));
@@ -41,8 +49,8 @@ export class MoosClient {
     let mail = new MoosMail();
     mail.name = name;
     mail.content = content;
+    this.subscribe(name); // If it isn't already, subscribe
     this.receivedMail.set(name, mail); // In case the message doesn't loop back with an update
-    this.ws.send(name); // If it isn't already, subscribe
     this.ws.send(name + "=" + content); // Send the update
   }
 
@@ -82,4 +90,5 @@ export class MoosMail {
   public timestamp: number;
   public hiddenFromList: boolean = false; // Users can unhide by resubscribing under the client card
   public expandOnList: boolean = false;
+  public notifyOnUpdate: boolean = false;
 }
