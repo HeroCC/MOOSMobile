@@ -51,7 +51,13 @@ export class MoosClient {
     mail.content = content;
     this.subscribe(name); // If it isn't already, subscribe
     this.receivedMail.set(name, mail); // In case the message doesn't loop back with an update
-    this.ws.send(name + "=" + content); // Send the update
+    if (this.ws.readyState == 1) {
+      this.ws.send(name + "=" + content);
+    } else {
+      this.ws.addEventListener('open', (evt => {
+        this.ws.send(name + "=" + content);
+      }));
+    }
   }
 
   subscribe(name: string) {
@@ -61,7 +67,15 @@ export class MoosClient {
     mail.content = "";
     mail.timestamp = 0;
     this.receivedMail.set(name, mail);
-    this.ws.send(mail.name);
+    if (this.ws.readyState == 1) {
+      // If we attempt to send a message when the socket isn't connected, it will fail end error
+      // However, it is added to receivedMail, and will be subscribed to when it becomes available
+      this.ws.send(mail.name);
+    } else {
+      this.ws.addEventListener('open', (evt => {
+        this.ws.send(mail.name);
+      }));
+    }
   }
 
   getSimplifiedClient() {

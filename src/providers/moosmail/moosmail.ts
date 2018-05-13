@@ -34,7 +34,7 @@ export class MoosmailProvider {
     return client;
   }
 
-  static processMailString(value): Map<string, string> {
+  static processMailString(value: string): Map<string, string> {
     const pairs = value.split(",");
     let thisVars: Map<string, string> = new Map();
     for (let i = 0; i < pairs.length; i++) {
