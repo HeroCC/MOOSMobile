@@ -1,6 +1,6 @@
 {
   "name": "MOOSMobile",
-  "app_id": "",
+  "app_id": "f98289d4",
   "type": "ionic-angular",
   "integrations": {
     "cordova": {}
