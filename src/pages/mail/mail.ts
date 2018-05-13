@@ -12,7 +12,7 @@ export class MailPage {
 
   constructor(public navCtrl: NavController, public mm: MoosmailProvider, private alertCtrl: AlertController,
               public localNotification: PhonegapLocalNotification) {
-    this.localNotification.requestPermission();
+
   }
 
   getMapValuesAsArray(map: Map<any, any>) {

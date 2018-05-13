@@ -33,7 +33,7 @@
               Edit
             </button>
 
-            <button ion-button color="special" *ngIf="!mail.notifyOnUpdate" (click)="mail.notifyOnUpdate = !mail.notifyOnUpdate">
+            <button ion-button color="special" *ngIf="!mail.notifyOnUpdate" (click)="this.localNotification.requestPermission(); mail.notifyOnUpdate = !mail.notifyOnUpdate">
               <ion-icon name="alert"></ion-icon>
               Alert
             </button>
