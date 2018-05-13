@@ -33,7 +33,7 @@
               Edit
             </button>
 
-            <button ion-button color="special" *ngIf="!mail.notifyOnUpdate" (click)="this.localNotification.requestPermission(); mail.notifyOnUpdate = !mail.notifyOnUpdate">
+            <button ion-button color="special" *ngIf="!mail.notifyOnUpdate" (click)="mail.notifyOnUpdate = !mail.notifyOnUpdate">
               <ion-icon name="alert"></ion-icon>
               Alert
             </button>
@@ -45,6 +45,15 @@
             <button ion-button color="danger" (click)="mail.hiddenFromList = true">
               <ion-icon name="trash"></ion-icon>
               Hide
+            </button>
+
+            <button ion-button color="secondary" *ngIf="!client.savedMail.has(mail.name)" [disabled]="!client.isRemembered(this.mm)" (click)="client.savedMail.add(mail.name); client.remember(this.mm)">
+              <ion-icon name="archive"></ion-icon>
+              Save
+            </button>
+            <button ion-button color="warning" *ngIf="client.savedMail.has(mail.name)" (click)="client.savedMail.add(mail.name); client.remember(mm)">
+              <ion-icon name="archive"></ion-icon>
+              Unsave
             </button>
           </ion-item-options>
         </ion-item-sliding>
@@ -59,9 +68,13 @@
         </button>
       </ion-col>
       <ion-col>
-        <button ion-button icon-left clear small (click)="client.forget(this.mm)">
+        <button ion-button icon-left clear small (click)="client.remember(this.mm)" *ngIf="!client.isRemembered(this.mm)">
+          <ion-icon name="archive"></ion-icon>
+          Save
+        </button>
+        <button ion-button icon-left clear small (click)="client.forget(this.mm)" *ngIf="client.isRemembered(this.mm)">
           <ion-icon name="trash"></ion-icon>
-          Remove
+          Forget
         </button>
       </ion-col>
     </ion-row>

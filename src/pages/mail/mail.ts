@@ -12,7 +12,7 @@ export class MailPage {
 
   constructor(public navCtrl: NavController, public mm: MoosmailProvider, private alertCtrl: AlertController,
               public localNotification: PhonegapLocalNotification) {
-
+    this.localNotification.requestPermission();
   }
 
   getMapValuesAsArray(map: Map<any, any>) {
@@ -79,7 +79,6 @@ export class MailPage {
               client.receivedMail.get(data.mail).hiddenFromList = false;
             }
             client.subscribe(data.mail);
-            this.mm.resave();
             return true;
           }
         }
@@ -113,7 +112,7 @@ export class MailPage {
         {
           text: 'Add',
           handler: data => {
-            if (this.mm.knownClients.has(data.name)) {
+            if (this.mm.savedClients.has(data.name)) {
               alert("There is already a client saved with this name!");
               return false;
             }
