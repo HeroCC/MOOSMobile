@@ -49,7 +49,7 @@ export class MapPage {
     const long: number = parseFloat(nodeReport.get("LON"));
     const head: number = parseFloat(nodeReport.get("HDG"));
     marker.setPosition(new LatLng(lat, long));
-    marker.setRotation(head);
+    marker.setRotation(head + 90);
   }
 
 

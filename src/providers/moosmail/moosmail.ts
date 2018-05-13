@@ -53,6 +53,7 @@ export class MoosmailProvider {
   Useful links for implementing points <=> coords
   https://github.com/moos-ivp/svn-mirror/blob/febd739ec9736543e74dc902d2d252db7cb0e8bb/ivp/data/datums.txt
   http://oceanai.mit.edu/aquaticus/pmwiki/pmwiki.php?n=Site.FieldCoords
+  https://www.npmjs.com/package/proj4
    */
 }
 
