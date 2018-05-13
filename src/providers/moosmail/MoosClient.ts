@@ -7,9 +7,8 @@ export class MoosClient {
   public readonly ws: ReconnectingWebsocket;
   public receivedMail: Map<string, MoosMail> = new Map();
   public mailEmitter = new Subject<MoosMail>();
-  public savedMail: Set<string> = new Set();
 
-  constructor(public name: string, public address: string) {
+  constructor(public name: string, public address: string, initialMail?: string[]) {
     let localNotification: PhonegapLocalNotification = new PhonegapLocalNotification();
     this.ws = new ReconnectingWebsocket(address); // See https://github.com/joewalnes/reconnecting-websocket
     this.ws.reconnectInterval = 3000; // 3 Seconds
@@ -39,7 +38,7 @@ export class MoosClient {
     this.ws.addEventListener('open', (evt => {
       // All clients should subscribe to NODE_REPORTs by default (required for the map to work)
       this.subscribe("NODE_REPORT");
-      this.savedMail.forEach((value => {
+      initialMail.forEach((value => {
         this.subscribe(value);
       }));
     }));
@@ -65,22 +64,18 @@ export class MoosClient {
   }
 
   getSimplifiedClient() {
-    return {name: this.name, address: this.address, savedMail: this.savedMail};
-  }
+    let savedMail: string[] = [];
 
-  remember(mm: MoosmailProvider) {
-    this.forget(mm);
-    mm.savedClients.set(this.name, this.getSimplifiedClient());
-    mm.resave();
+    this.receivedMail.forEach((value, key) => {
+      if (!value.hiddenFromList) savedMail.push(value.name);
+    });
+
+    return {name: this.name, address: this.address, savedMail: savedMail};
   }
 
   forget(mm: MoosmailProvider) {
-    mm.savedClients.delete(this.name);
+    mm.knownClients.delete(this.name);
     mm.resave();
-  }
-
-  isRemembered(mm: MoosmailProvider) {
-    return mm.savedClients.has(this.name);
   }
 }
 

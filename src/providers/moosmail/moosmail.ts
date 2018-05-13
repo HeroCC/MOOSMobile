@@ -1,33 +1,37 @@
 import {Injectable} from '@angular/core';
-import {MoosClient} from "./MoosClient";
+import {MoosClient, MoosMail} from "./MoosClient";
 import {Storage} from "@ionic/storage";
 import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class MoosmailProvider {
-  public savedClients: Map<string, {name, address, savedMail}> = new Map();
   public knownClients: Map<string, MoosClient> = new Map();
   public newClientEmitter = new Subject<MoosClient>();
   public static pauseUpdates = false;
 
   constructor(private storage: Storage) {
     this.storage.get("rememberedClients").then((value => {
-      if (value == null) return;
-      this.savedClients = value;
-      value.forEach((client => {
+      value.forEach((recalledClient => {
         // Client properties are recalled here
-        this.discoverNewClient(client.name, client.address).savedMail = client.savedMail;
+        let cc = this.discoverNewClient(recalledClient.name, recalledClient.address);
+
+        recalledClient.savedMail.forEach((j) => {
+          // We can't use the subscribe()
+          cc.receivedMail.set(j, new MoosMail());
+        });
+
       }));
 
       if (!this.knownClients.has("shoreside")) {
         // In case the app isn't configured, use a default value
-        this.discoverNewClient("shoreside", "ws://192.168.1.15:9090/listen").remember(this);
+        this.discoverNewClient("shoreside", "ws://192.168.1.15:9090/listen");
       }
+      this.resave();
     }));
   }
 
   discoverNewClient(name: string, address: string) {
-    //if (this.knownClients.get(name) != null) return;
+    //if (this.knownClients.get(name) != null) client = this.knownClients.get(name);
     let client = new MoosClient(name, address);
     this.knownClients.set(name, client);
     this.newClientEmitter.next(client);
@@ -46,7 +50,11 @@ export class MoosmailProvider {
   }
 
   resave() {
-    this.storage.set("rememberedClients", this.savedClients);
+    let savedClients = new Set();
+    this.knownClients.forEach((value => {
+      savedClients.add(value.getSimplifiedClient());
+    }));
+    this.storage.set("rememberedClients", savedClients);
   }
 
   /*
