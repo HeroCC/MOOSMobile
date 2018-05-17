@@ -92,7 +92,7 @@ export class MapPage {
     this.mm.knownClients.forEach((client: MoosClient, name: string) => {
       client.mailEmitter.subscribe((mail: MoosMail) => {
         if (mail.name == "NODE_REPORT") {
-          this.updateMarkers(MoosmailProvider.processMailString(mail.content));
+          this.updateMarkers(MoosmailProvider.parseString(mail.content));
         }
       });
     });
@@ -100,7 +100,7 @@ export class MapPage {
     this.mm.newClientEmitter.subscribe((client: MoosClient) => {
       client.mailEmitter.subscribe((mail: MoosMail) => {
         if (mail.name == "NODE_REPORT") {
-          this.updateMarkers(MoosmailProvider.processMailString(mail.content));
+          this.updateMarkers(MoosmailProvider.parseString(mail.content));
         }
       });
     });

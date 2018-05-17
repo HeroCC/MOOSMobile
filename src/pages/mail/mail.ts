@@ -16,14 +16,8 @@ export class MailPage {
   }
 
   getMapValuesAsArray(map: Map<any, any>) {
-    // Map.keys() & Map.values() exists, but when using in an *ngFor will throw an ExpressionChangedAfterItHasBeenCheckedError
-    // See https://github.com/angular/angular/issues/2246
-    let result = [];
-
-    map.forEach((value, key) => {
-      result.push(value);
-    });
-    return result;
+    // Angular webpages can't access static methods from other classes, so use this as a bridge to the real function
+    return MoosmailProvider.getMapContentsAsArray(map);
   }
 
   editMailPrompt(client: MoosClient, mailName: string) {

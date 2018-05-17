@@ -34,15 +34,26 @@ export class MoosmailProvider {
     return client;
   }
 
-  static processMailString(value: string): Map<string, string> {
-    const pairs = value.split(",");
+  static parseString(value: string, chunkSep: string = ",", valSep: string = "="): Map<string, string> {
+    const pairs = value.split(chunkSep);
     let thisVars: Map<string, string> = new Map();
     for (let i = 0; i < pairs.length; i++) {
-      const key = pairs[i].split("=")[0];
-      value = pairs[i].split("=")[1];
+      const key = pairs[i].split(valSep)[0];
+      const value = pairs[i].slice(pairs[i].indexOf(valSep) + 1);
       thisVars.set(key, value);
     }
     return thisVars;
+  }
+
+  static getMapContentsAsArray(map: Map<any, any>, getKeys: boolean = false) {
+    // Map.keys() & Map.values() exists, but when using in an *ngFor will throw an ExpressionChangedAfterItHasBeenCheckedError
+    // See https://github.com/angular/angular/issues/2246
+    let result = [];
+
+    map.forEach((value, key) => {
+      getKeys ? result.push(key) : result.push(value);
+    });
+    return result;
   }
 
   resave() {

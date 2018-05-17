@@ -4,7 +4,24 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding>
-
+  <ion-card *ngFor="let node of getMapContentsAsArray(appcastContainer, true)">
+    <ion-card-header>
+      {{node}}
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let proc of getMapContentsAsArray(appcastContainer.get(node))">
+          <h2>
+            {{proc.procName}} <ion-note>{{proc.iterations}}</ion-note>
+          </h2>
+          <ion-list>
+          <ion-item>
+            <pre *ngFor="let message of proc.messages">{{message.trim()}}</pre>
+          </ion-item>
+          </ion-list>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
