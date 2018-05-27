@@ -3,13 +3,15 @@ import {MoosmailProvider} from "./moosmail";
 export class AppCast {
   procName: string;
   nodeName: string;
+  timestamp: number;
 
   iterations: number;
-  messages: string[];
-  configWarnings: string[];
+  messages: string[] = [];
+  configWarnings: string[] = [];
 
+  numberRunWarnings: number;
   runWarnings: string[] = [];
-  events: string[];
+  events: string[] = [];
 
   /**
    * This will turn a string into an AppCast object based on the steps found in MOOS Core's AppCast::string2AppCast(str)
@@ -23,6 +25,7 @@ export class AppCast {
     let ac: AppCast = new AppCast;
 
     let appcastMap = MoosmailProvider.parseString(appcastString, osep);
+    ac.timestamp = Date.now();
     ac.procName = appcastMap.get("proc");
     ac.iterations = Number(appcastMap.get("iter"));
     ac.nodeName = appcastMap.get("node");
@@ -30,8 +33,7 @@ export class AppCast {
     if (appcastMap.has("config_warnings")) ac.configWarnings = appcastMap.get("config_warnings").split(isep);
     if (appcastMap.has("events")) ac.events = appcastMap.get("events").split(isep);
     if (appcastMap.has("run_warnings")) ac.runWarnings = appcastMap.get("run_warnings").split(isep);
-    if (appcastMap.has("run_warning_total") && Number(appcastMap.get("run_warning_total")) != ac.runWarnings.length)
-      console.warn("The number of run warnings reported doesn't match the number we have, there may be discrepancies");
+    if (appcastMap.has("run_warning_total")) ac.numberRunWarnings = Number(appcastMap.get("run_warning_total"));
 
     return ac;
   }

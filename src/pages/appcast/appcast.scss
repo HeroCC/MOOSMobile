@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono");
 
 page-appcast {
-  pre, code { font-family: 'Roboto Mono', monospace; }
+  pre, code {
+    font-family: 'Roboto Mono', monospace;
+    margin: 0;
+  }
 }

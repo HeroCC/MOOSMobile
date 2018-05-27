@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController, NavParams, ToastController} from 'ionic-angular';
+import {ModalController, NavController, NavParams, ToastController} from 'ionic-angular';
 import {MoosmailProvider} from "../../providers/moosmail/moosmail";
 import {MoosMail} from "../../providers/moosmail/MoosClient";
 import {AppCast} from "../../providers/moosmail/AppCast";
@@ -12,7 +12,7 @@ export class AppcastPage {
   appcastContainer: Map<string, Map<string, AppCast>> = new Map();
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public mm: MoosmailProvider,
-              public toast: ToastController) {
+              public toast: ToastController, public modal: ModalController) {
 
   }
 
@@ -42,7 +42,6 @@ export class AppcastPage {
           this.appcastContainer.set(parsedCast.nodeName, new Map()); // This usually shouldn't happen, as it is handled by the DB_CLIENT mail. However, keep is here just in case
 
         this.appcastContainer.get(parsedCast.nodeName).set(parsedCast.procName, parsedCast);
-        console.log(parsedCast);
       }
     });
   }
