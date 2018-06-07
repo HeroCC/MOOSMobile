@@ -16,12 +16,14 @@ import {IonicStorageModule} from "@ionic/storage";
 import {MomentModule} from "ngx-moment";
 import {AppcastPage} from "../pages/appcast/appcast";
 import {PhonegapLocalNotification} from "@ionic-native/phonegap-local-notification";
+import {AppcastDetailsPage} from "../pages/appcast-details/appcast-details";
 
 @NgModule({
   declarations: [
     MyApp,
     MapPage,
     AppcastPage,
+    AppcastDetailsPage,
     SettingsPage,
     MailPage,
     TabsPage
@@ -37,6 +39,7 @@ import {PhonegapLocalNotification} from "@ionic-native/phonegap-local-notificati
     MyApp,
     MapPage,
     AppcastPage,
+    AppcastDetailsPage,
     SettingsPage,
     MailPage,
     TabsPage

@@ -11,35 +11,15 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let proc of getMapContentsAsArray(appcastContainer.get(node))">
-          <div>
+        <button ion-item *ngFor="let proc of getMapContentsAsArray(appcastContainer.get(node))" (click)="this.openAppcastDetailsPage(proc)">
             <h2>
               {{proc.procName}} <ion-note>{{proc.timestamp | amTimeAgo}}</ion-note>
             </h2>
             <p>
               <span [ngStyle]="proc.configWarnings.length != 0 && {'color': '#f53d3d'}">CW: {{proc.configWarnings.length}}</span>,
               <span [ngStyle]="proc.runWarnings.length != 0 && {'color': '#f53d3d'}">RW: {{proc.runWarnings.length}}</span>,
-              <span>Events: {{proc.events.length}}</span>
             </p>
-          </div>
-          <ion-list>
-            <ion-item *ngIf="proc.configWarnings.length > 0">
-              <pre>{{proc.configWarnings.join("\n")}}</pre>
-            </ion-item>
-            <ion-item *ngIf="proc.numberRunWarnings > 0">
-              <pre>{{proc.runWarnings.join("\n")}}</pre>
-              <pre *ngIf="proc.numberRunWarnings > proc.runWarnings.length">And {{proc.numberRunWarnings - proc.runWarnings.length}} more</pre>
-            </ion-item>
-            <ion-item>
-              <h3>Messages</h3>
-              <pre>{{proc.messages.join("\n")}}</pre>
-            </ion-item>
-            <ion-item>
-              <h3>Events</h3>
-              <pre>{{proc.events.join("\n")}}</pre>
-            </ion-item>
-          </ion-list>
-        </ion-item>
+        </button>
       </ion-list>
     </ion-card-content>
   </ion-card>
