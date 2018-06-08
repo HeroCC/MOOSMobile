@@ -49,7 +49,6 @@ export class MoosClient {
     let mail = new MoosMail();
     mail.name = name;
     mail.content = content;
-    this.subscribe(name); // If it isn't already, subscribe
     this.receivedMail.set(name, mail); // In case the message doesn't loop back with an update
     if (this.ws.readyState == 1) {
       this.ws.send(name + "=" + content);
@@ -79,11 +78,10 @@ export class MoosClient {
   }
 
   getSimplifiedClient() {
-    return {name: this.name, address: this.address, savedMail: this.savedMail};
+    return {name: this.name, address: this.address, savedMail: Array.from(this.savedMail)};
   }
 
   remember(mm: MoosmailProvider) {
-    this.forget(mm);
     mm.savedClients.set(this.name, this.getSimplifiedClient());
     mm.resave();
   }

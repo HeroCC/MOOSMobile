@@ -13,10 +13,12 @@ export class MoosmailProvider {
   constructor(private storage: Storage) {
     this.storage.get("rememberedClients").then((value => {
       if (value == null) return;
-      this.savedClients = value;
-      value.forEach((client => {
+      JSON.parse(value).forEach((client => {
+        console.log(client);
         // Client properties are recalled here
-        this.discoverNewClient(client.name, client.address).savedMail = client.savedMail;
+        let newClient = this.discoverNewClient(client.name, client.address);
+        newClient.savedMail = new Set(client.savedMail);
+        newClient.remember(this);
       }));
 
       if (!this.knownClients.has("shoreside")) {
@@ -57,7 +59,8 @@ export class MoosmailProvider {
   }
 
   resave() {
-    this.storage.set("rememberedClients", this.savedClients);
+    // Android / iOS devices can't store JS Objects, so stringify it before saving
+    this.storage.set("rememberedClients", JSON.stringify(MoosmailProvider.getMapContentsAsArray(this.savedClients)));
   }
 
   /*
