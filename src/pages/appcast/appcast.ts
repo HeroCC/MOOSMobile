@@ -32,7 +32,7 @@ export class AppcastPage {
 
   ionViewDidLoad() {
     let client = this.mm.knownClients.get(this.masterNode);
-    if (client.name != this.masterNode){
+    if (client == null){
       this.toast.create({
         message: "A client named '" + this.masterNode + "' is required for AppCasts to function, but none was found",
         duration: 5000,
