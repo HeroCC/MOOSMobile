@@ -51,7 +51,7 @@
               <ion-icon name="archive"></ion-icon>
               Save
             </button>
-            <button ion-button color="warning" *ngIf="client.savedMail.has(mail.name)" (click)="client.savedMail.add(mail.name); client.remember(mm)">
+            <button ion-button color="warning" *ngIf="client.savedMail.has(mail.name)" (click)="client.savedMail.delete(mail.name); client.remember(mm)">
               <ion-icon name="archive"></ion-icon>
               Unsave
             </button>
