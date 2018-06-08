@@ -92,7 +92,7 @@ export class MailPage {
         },
         {
           name: 'address',
-          placeholder: 'Address:Port'
+          placeholder: '192.168.1.20:9090'
         }
       ],
       buttons: [
@@ -106,11 +106,11 @@ export class MailPage {
         {
           text: 'Add',
           handler: data => {
-            if (this.mm.savedClients.has(data.name)) {
+            if (this.mm.savedClients.has(data.name.toLowerCase())) {
               alert("There is already a client saved with this name!");
               return false;
             }
-            this.mm.discoverNewClient(data.name, "ws://" + data.address + "/listen");
+            this.mm.discoverNewClient(data.name.toLowerCase(), "ws://" + data.address + "/listen");
             return true;
           }
         }
