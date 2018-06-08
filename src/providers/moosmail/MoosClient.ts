@@ -37,8 +37,6 @@ export class MoosClient {
     }));
 
     this.ws.addEventListener('open', (evt => {
-      // All clients should subscribe to NODE_REPORTs by default (required for the map to work)
-      this.subscribe("NODE_REPORT");
       this.savedMail.forEach((value => {
         this.subscribe(value);
       }));

@@ -1,20 +1,19 @@
 import {Injectable} from '@angular/core';
 import {MoosClient} from "./MoosClient";
 import {Storage} from "@ionic/storage";
-import {Subject} from "rxjs/Subject";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class MoosmailProvider {
   public savedClients: Map<string, {name, address, savedMail}> = new Map();
   public knownClients: Map<string, MoosClient> = new Map();
-  public newClientEmitter = new Subject<MoosClient>();
+  public newClientEmitter = new BehaviorSubject<MoosClient>(null);
   public static pauseUpdates = false;
 
   constructor(private storage: Storage) {
     this.storage.get("rememberedClients").then((value => {
       if (value == null) return;
       JSON.parse(value).forEach((client => {
-        console.log(client);
         // Client properties are recalled here
         let newClient = this.discoverNewClient(client.name, client.address);
         newClient.savedMail = new Set(client.savedMail);

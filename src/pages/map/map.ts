@@ -89,15 +89,9 @@ export class MapPage {
   }
 
   subscribeToMail() {
-    this.mm.knownClients.forEach((client: MoosClient, name: string) => {
-      client.mailEmitter.subscribe((mail: MoosMail) => {
-        if (mail.name == "NODE_REPORT") {
-          this.updateMarkers(MoosmailProvider.parseString(mail.content));
-        }
-      });
-    });
-
     this.mm.newClientEmitter.subscribe((client: MoosClient) => {
+      if (client == null) return;
+      client.subscribe("NODE_REPORT");
       client.mailEmitter.subscribe((mail: MoosMail) => {
         if (mail.name == "NODE_REPORT") {
           this.updateMarkers(MoosmailProvider.parseString(mail.content));
