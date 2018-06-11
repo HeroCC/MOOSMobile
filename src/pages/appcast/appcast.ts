@@ -37,7 +37,8 @@ export class AppcastPage {
         message: "A client named '" + this.masterNode + "' is required for AppCasts to function, but none was found",
         duration: 5000,
         dismissOnPageChange: true,
-      });
+        position: 'top',
+      }).present();
       return;
     }
 

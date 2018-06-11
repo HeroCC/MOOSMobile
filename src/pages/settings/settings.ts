@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController, ToastController} from 'ionic-angular';
 import {Storage} from "@ionic/storage";
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'page-settings',
@@ -10,16 +10,13 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 export class SettingsPage {
   private prefs: FormGroup = new FormGroup({});
 
-  constructor(public navCtrl: NavController, private storage: Storage) {
+  constructor(public navCtrl: NavController, private storage: Storage, private toast: ToastController) {
     this.initPref("mapLocation", "forest");
-
-    navCtrl.viewWillLeave.subscribe(() => {
-      this.saveSettings();
-    });
+    this.initPref("disabledPages", []);
   }
 
-  initPref(key, defaultValue: string) {
-    this.prefs.addControl(key, new FormControl('', [Validators.required]));
+  initPref(key, defaultValue) {
+    this.prefs.addControl(key, new FormControl('', []));
     this.storage.get("prefs." + key).then(value => {
       if (value == "" || value == null) {
         value = defaultValue;
@@ -33,6 +30,14 @@ export class SettingsPage {
     for (let key in this.prefs.controls) {
       this.storage.set("prefs." + key, this.prefs.get(key).value);
     }
-    alert("Saved! You may need to restart the app for settings to take affect");
+
+    this.toast.create({
+      message: "Saved! You may need to restart the app for settings to take affect",
+      duration: 5000,
+      dismissOnPageChange: true,
+      position: 'top',
+    }).present();
+
+    this.prefs.markAsPristine();
   }
 }

@@ -10,22 +10,29 @@
   <form (ngSubmit)="saveSettings()" [formGroup]="prefs">
     <ion-card>
       <ion-card-header>
-        Map
+        General
       </ion-card-header>
       <ion-card-content>
         <ion-list>
           <ion-item>
-            <ion-list-header>Shoreside</ion-list-header>
-            <ion-icon name="pin" item-start></ion-icon>
-            <ion-select formControlName="mapLocation" icon-end>
+            <ion-label>Map Location</ion-label>
+            <ion-select formControlName="mapLocation">
               <ion-option value="forest">Forest Lake</ion-option>
               <ion-option value="mit">MIT Pavilion</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Hidden Pages</ion-label>
+            <ion-select formControlName="disabledPages" multiple="true">
+              <ion-option value="map">Map</ion-option>
+              <ion-option value="mail">Mail</ion-option>
+              <ion-option value="appcast">AppCast</ion-option>
             </ion-select>
           </ion-item>
         </ion-list>
       </ion-card-content>
     </ion-card>
     <br>
-    <button ion-button block type="submit" [disabled]="!prefs.valid">Submit</button>
+    <button ion-button block type="submit" [color]="!prefs.pristine && 'danger'" [disabled]="!prefs.valid">Save</button>
   </form>
 </ion-content>
