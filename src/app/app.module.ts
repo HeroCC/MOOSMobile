@@ -17,6 +17,10 @@ import {MomentModule} from "ngx-moment";
 import {AppcastPage} from "../pages/appcast/appcast";
 import {PhonegapLocalNotification} from "@ionic-native/phonegap-local-notification";
 import {AppcastDetailsPage} from "../pages/appcast-details/appcast-details";
+import {CodePush} from "@ionic-native/code-push";
+import {AppCenterAnalytics} from "@ionic-native/app-center-analytics";
+import {AppCenterCrashes} from "@ionic-native/app-center-crashes";
+import {AppVersion} from "@ionic-native/app-version";
 
 @NgModule({
   declarations: [
@@ -48,6 +52,10 @@ import {AppcastDetailsPage} from "../pages/appcast-details/appcast-details";
     StatusBar,
     SplashScreen,
     GoogleMaps,
+    CodePush,
+    AppCenterAnalytics,
+    AppCenterCrashes,
+    AppVersion,
     PhonegapLocalNotification,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     MoosmailProvider

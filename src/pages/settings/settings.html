@@ -29,7 +29,12 @@
               <ion-option value="appcast">AppCast</ion-option>
             </ion-select>
           </ion-item>
+          <ion-item>
+            <ion-label>Auto Update</ion-label>
+            <ion-toggle formControlName="autoUpdate"></ion-toggle>
+          </ion-item>
         </ion-list>
+        <ion-note ion-item (click)="this.codePush.checkForUpdate()">Binary: {{this.binaryVersion}}, Push: {{this.pushVersion}}</ion-note>
       </ion-card-content>
     </ion-card>
     <br>

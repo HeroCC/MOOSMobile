@@ -35,8 +35,7 @@ export class AppcastPage {
     if (client == null){
       this.toast.create({
         message: "A client named '" + this.masterNode + "' is required for AppCasts to function, but none was found",
-        duration: 5000,
-        dismissOnPageChange: true,
+        duration: 4000,
         position: 'top',
       }).present();
       return;
