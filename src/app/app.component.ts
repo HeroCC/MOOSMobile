@@ -19,6 +19,7 @@ export class MyApp {
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, storage: Storage,
               codePush: CodePush, acCrash: AppCenterCrashes, acAnalytics: AppCenterAnalytics) {
     platform.ready().then(() => {
+      codePush.notifyApplicationReady();
       storage.get('prefs.autoUpdate').then(value => {
         if (value != null && !value) return;
         console.log("Auto Updates and Analytics are enabled, enabling now...");

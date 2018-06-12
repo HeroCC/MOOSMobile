@@ -19,7 +19,7 @@ export class AppcastDetailsPage {
     this.timer = window.setInterval(() => {
       this.mm.knownClients.get("shoreside").sendMessage("APPCAST_REQ",
         "node=" + this.proc.nodeName + ",app=" + this.proc.procName + ",duration=1.0,threshold=any,key=MOOSMOBILE_DETAILS")
-    }, 1500);
+    }, 2000);
   }
 
   ionViewWillLeave() {
