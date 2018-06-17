@@ -44,7 +44,7 @@ export class MoosClient {
   }
 
   sendMessage(name: string, content: string) {
-    let mail = new MoosMail();
+    let mail = this.receivedMail.get(name) || new MoosMail();
     mail.name = name;
     mail.content = content;
     this.receivedMail.set(name, mail); // In case the message doesn't loop back with an update

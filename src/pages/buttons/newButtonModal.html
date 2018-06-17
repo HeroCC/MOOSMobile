@@ -1,0 +1,31 @@
+<ion-content>
+  <form [formGroup]="newButtonForm" (ngSubmit)="submitNewToggle()">
+    <ion-item>
+      <ion-label>Client</ion-label>
+      <ion-select type="text" formControlName="clientName">
+        <ion-option *ngFor="let client of getMapValuesAsArray(this.mm.knownClients)" value="{{client.name}}">{{client.name}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Mail Name</ion-label>
+      <ion-input type="text" formControlName="mailName"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Label</ion-label>
+      <ion-input type="text" formControlName="label"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Read Only</ion-label>
+      <ion-toggle formControlName="readonly" checked="false"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Type</ion-label>
+      <ion-select formControlName="inputType">
+        <ion-option value="boolean">Boolean</ion-option>
+        <ion-option value="number">Number</ion-option>
+        <ion-option value="text">Text</ion-option>
+      </ion-select>
+    </ion-item>
+    <button ion-button full type="submit" [disabled]="!newButtonForm.valid">Submit</button>
+  </form>
+</ion-content>

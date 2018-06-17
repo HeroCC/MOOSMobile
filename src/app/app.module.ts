@@ -21,6 +21,7 @@ import {CodePush} from "@ionic-native/code-push";
 import {AppCenterAnalytics} from "@ionic-native/app-center-analytics";
 import {AppCenterCrashes} from "@ionic-native/app-center-crashes";
 import {AppVersion} from "@ionic-native/app-version";
+import {ButtonsPageModule} from "../pages/buttons/buttons.module";
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import {AppVersion} from "@ionic-native/app-version";
   imports: [
     MomentModule,
     BrowserModule,
+    ButtonsPageModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot()
   ],
