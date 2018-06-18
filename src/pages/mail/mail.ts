@@ -109,6 +109,8 @@ export class MailPage {
             if (this.mm.savedClients.has(data.name.toLowerCase())) {
               alert("There is already a client saved with this name!");
               return false;
+            } else if (!new RegExp('[0-9]+(?:\.[0-9]+){3}:[0-9]+').test(data.address)) {
+              alert("The IP address / port you entered doesn't look valid. Continuing with your input, but please review to ensure you didn't mistype");
             }
             this.mm.discoverNewClient(data.name.toLowerCase(), "ws://" + data.address + "/listen");
             return true;
