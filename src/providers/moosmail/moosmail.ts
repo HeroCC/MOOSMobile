@@ -5,7 +5,7 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class MoosmailProvider {
-  public savedClients: Map<string, {name, address, savedMail}> = new Map();
+  public savedClients: Map<string, {name, address, password, savedMail}> = new Map();
   public knownClients: Map<string, MoosClient> = new Map();
   public newClientEmitter = new BehaviorSubject<MoosClient>(null);
   public static pauseUpdates = false;
@@ -15,21 +15,16 @@ export class MoosmailProvider {
       if (value == null) return;
       JSON.parse(value).forEach((client => {
         // Client properties are recalled here
-        let newClient = this.discoverNewClient(client.name, client.address);
+        let newClient = this.discoverNewClient(client.name, client.address, client.password);
         newClient.savedMail = new Set(client.savedMail);
         newClient.remember(this);
       }));
-
-      if (!this.knownClients.has("shoreside")) {
-        // In case the app isn't configured, use a default value
-        this.discoverNewClient("shoreside", "ws://192.168.1.15:9090/listen").remember(this);
-      }
     }));
   }
 
-  discoverNewClient(name: string, address: string) {
+  discoverNewClient(name: string, address: string, password?: string) {
     //if (this.knownClients.get(name) != null) return;
-    let client = new MoosClient(name, address);
+    let client = new MoosClient(name, address, password);
     this.knownClients.set(name, client);
     this.newClientEmitter.next(client);
     return client;

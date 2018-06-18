@@ -9,7 +9,7 @@ export class MoosClient {
   public mailEmitter = new Subject<MoosMail>();
   public savedMail: Set<string> = new Set();
 
-  constructor(public name: string, public address: string) {
+  constructor(public name: string, public address: string, private password?: string) {
     let localNotification: PhonegapLocalNotification = new PhonegapLocalNotification();
     this.ws = new ReconnectingWebsocket(address); // See https://github.com/joewalnes/reconnecting-websocket
     this.ws.reconnectInterval = 3000; // 3 Seconds
@@ -37,6 +37,7 @@ export class MoosClient {
     }));
 
     this.ws.addEventListener('open', (evt => {
+      this.sendInternalMessage("SetPassword", this.password);
       this.savedMail.forEach((value => {
         this.subscribe(value);
       }));
@@ -53,6 +54,18 @@ export class MoosClient {
     } else {
       this.ws.addEventListener('open', (evt => {
         this.ws.send(name + "=" + content);
+      }));
+    }
+  }
+
+  sendInternalMessage(name: string, content: string) {
+    const reservedChar = "$";
+
+    if (this.ws.readyState == 1) {
+      this.ws.send(reservedChar + name + "=" + content);
+    } else {
+      this.ws.addEventListener('open', (evt => {
+        this.ws.send(reservedChar + name + "=" + content);
       }));
     }
   }
@@ -76,7 +89,7 @@ export class MoosClient {
   }
 
   getSimplifiedClient() {
-    return {name: this.name, address: this.address, savedMail: Array.from(this.savedMail)};
+    return {name: this.name, address: this.address, password: this.password, savedMail: Array.from(this.savedMail)};
   }
 
   remember(mm: MoosmailProvider) {

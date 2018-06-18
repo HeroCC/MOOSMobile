@@ -93,6 +93,11 @@ export class MailPage {
         {
           name: 'address',
           placeholder: '192.168.1.20:9090'
+        },
+        {
+          name: 'password',
+          placeholder: 'Password (Optional)',
+          type: 'password'
         }
       ],
       buttons: [
@@ -112,7 +117,7 @@ export class MailPage {
             } else if (!new RegExp('[0-9]+(?:\.[0-9]+){3}:[0-9]+').test(data.address)) {
               alert("The IP address / port you entered doesn't look valid. Continuing with your input, but please review to ensure you didn't mistype");
             }
-            this.mm.discoverNewClient(data.name.toLowerCase(), "ws://" + data.address + "/listen");
+            this.mm.discoverNewClient(data.name.toLowerCase(), "ws://" + data.address + "/listen", data.password);
             return true;
           }
         }
