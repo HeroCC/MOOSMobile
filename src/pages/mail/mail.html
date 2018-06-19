@@ -7,7 +7,8 @@
 <ion-content padding>
   <ion-card *ngFor="let client of getMapValuesAsArray(this.mm.knownClients)">
     <ion-card-header>
-      <h2 [ngStyle]="client.ws.readyState != 1 && {'color': '#f53d3d'}">{{client.name}} <ion-note>{{client.ws.url}}</ion-note></h2>
+      <h2><span [ngStyle]="client.ws.readyState != 1 && {'color': '#f53d3d'}">{{client.name}}</span>
+        <ion-note>{{client.ws.url}} <ion-icon name="lock" *ngIf="client.receivedMail.get('$IsAuthenticated') != null"></ion-icon></ion-note></h2>
     </ion-card-header>
     <ion-card-content>
       <ion-list>

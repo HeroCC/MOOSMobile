@@ -13,19 +13,18 @@ export class MoosClient {
     let localNotification: PhonegapLocalNotification = new PhonegapLocalNotification();
     this.ws = new ReconnectingWebsocket(address); // See https://github.com/joewalnes/reconnecting-websocket
     this.ws.reconnectInterval = 3000; // 3 Seconds
-    this.ws.maxReconnectInterval = 10000; // 10 Seconds
+    this.ws.maxReconnectInterval = 5000; // 10 Seconds
 
     this.ws.addEventListener('message', (evt => {
       if (MoosmailProvider.pauseUpdates) return;
       const origString = evt.data;
       const name = origString.split("=")[0];
 
-      let mail = new MoosMail();
-      if (this.receivedMail.get(name) != null) mail = this.receivedMail.get(name);
+      let mail = this.receivedMail.get(name) || new MoosMail();
       mail.name = name;
       mail.content = origString.slice(origString.indexOf("=") + 1);
       mail.timestamp = Date.now();
-      if (mail.hiddenFromList == null) mail.hiddenFromList = false;
+      mail.hiddenFromList = mail.name.startsWith("$");
       if (mail.notifyOnUpdate){
         localNotification.create(mail.name + " has changed", {
           body: "Now set to " + mail.content,
