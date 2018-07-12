@@ -90,6 +90,8 @@
     <plugin name="cordova-plugin-googlemaps" spec="^2.1.1">
         <variable name="API_KEY_FOR_ANDROID" value="AIzaSyAuBt5JZNUUllyj-4HBImOqtXIcbkExw4E" />
         <variable name="API_KEY_FOR_IOS" value="AIzaSyDLhui3KBI8Jt0k3akWDs_EDGEvZIgMU-s" />
+        <variable name="LOCATION_WHEN_IN_USE_DESCRIPTION" value="This app wants to get your location while this app runs only." />
+        <variable name="LOCATION_ALWAYS_USAGE_DESCRIPTION" value="This app wants to get your location always, even this app runs in background." />
     </plugin>
     <plugin name="phonegap-plugin-local-notification" spec="^1.0.1" />
     <plugin name="cordova-sqlite-storage" spec="~2.2.1" />
@@ -101,5 +103,5 @@
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <engine name="ios" spec="4.5.4" />
-    <engine name="android" spec="6.3.0" />
+    <engine name="android" spec="7.0.0" />
 </widget>

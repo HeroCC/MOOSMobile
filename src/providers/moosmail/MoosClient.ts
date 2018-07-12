@@ -40,6 +40,9 @@ export class MoosClient {
       this.savedMail.forEach((value => {
         this.subscribe(value);
       }));
+      this.receivedMail.forEach(((value, key) => {
+        this.subscribe(key);
+      }));
     }));
   }
 
