@@ -60,6 +60,7 @@ export class MapPage {
       mapOptions = {
         controls: {
           compass: true,
+          myLocation: true,
           myLocationButton: true,
         },
         camera: {
@@ -85,7 +86,6 @@ export class MapPage {
       // Wait the MAP_READY before using any methods.
       this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
         this.subscribeToMail();
-        this.map.setMyLocationEnabled(true);
       });
     });
   }
