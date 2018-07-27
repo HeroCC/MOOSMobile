@@ -59,7 +59,8 @@ export class MapPage {
     this.storage.get("prefs.mapLocation").then((value) => {
       mapOptions = {
         controls: {
-          compass: true
+          compass: true,
+          myLocationButton: true,
         },
         camera: {
           zoom: 16,
@@ -84,6 +85,7 @@ export class MapPage {
       // Wait the MAP_READY before using any methods.
       this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
         this.subscribeToMail();
+        this.map.setMyLocationEnabled(true);
       });
     });
   }
