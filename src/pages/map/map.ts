@@ -1,17 +1,12 @@
 import {Component} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {Storage} from "@ionic/storage";
-import {
-  GoogleMap,
-  GoogleMapOptions,
-  GoogleMaps,
-  GoogleMapsEvent,
-  GoogleMapsMapTypeId,
-  LatLng,
-  Marker
-} from "@ionic-native/google-maps";
+import {GoogleMap, GoogleMaps, GoogleMapsEvent, GoogleMapsMapTypeId, Marker} from "@ionic-native/google-maps";
 import {MoosmailProvider} from "../../providers/moosmail/moosmail";
 import {MoosClient, MoosMail} from "../../providers/moosmail/MoosClient";
+
+const RAD_TO_DEG = 57.29577951308232;
+const DEG_TO_RAD = .0174532925199432958;
 
 @Component({
   selector: 'page-map',
@@ -19,45 +14,70 @@ import {MoosClient, MoosMail} from "../../providers/moosmail/MoosClient";
 })
 export class MapPage {
   map: GoogleMap;
-  mapMarkers: Map<string, Marker> = new Map<string, Marker>();
+  mapMarkers: Map<string, Marker> = new Map();
+
+  latOrigin: number;
+  lonOrigin: number;
 
   constructor(public navCtrl: NavController, private mm: MoosmailProvider, private storage: Storage){
     this.initializeMap();
   }
 
-  updateMarkers(newThing: Map<string, string>) {
-    const name: string = newThing.get("NAME");
-    if (this.mapMarkers.get(name) == null) {
-      let iconUrl;
-      if (newThing.get("TYPE") == "KAYAK") iconUrl = 'assets/imgs/kayak.png';
-      this.map.addMarker({
-        title: name,
-        label: name.slice(0,1),
-        icon: iconUrl
-        //snippet: "some useful details here",
-        //animation: plugin.google.maps.Animation.BOUNCE
-      }).then((marker: Marker) => {
-        this.mapMarkers.set(name, marker);
-      });
-    }
-    MapPage.updateMarker(this.mapMarkers.get(name), newThing);
-  }
+  updateObjects(parsedMail: Map<string, string>) {
+    const name: string = parsedMail.get("NAME") || parsedMail.get("LABEL");
+    let iconUrl;
+    switch (parsedMail.get("TYPE")) {
+      case "CIRCLE":
+        this.map.addCircle({
+          center: this.LocalGrid2LatLong(parseFloat(parsedMail.get("X")), parseFloat(parsedMail.get("Y"))),
+          radius: parseFloat(parsedMail.get("WIDTH")),
+          strokeWidth: 2,
+          fillColor: parsedMail.get("PRIMARY_COLOR"),
+          strokeColor: parsedMail.get("SECONDARY_COLOR"),
+        });
+        break;
 
-  static updateMarker(marker: Marker, nodeReport: Map<string, string>) {
-    if (marker == null || nodeReport == null) return;
-    const lat: number = parseFloat(nodeReport.get("LAT"));
-    const long: number = parseFloat(nodeReport.get("LON"));
-    const head: number = parseFloat(nodeReport.get("HDG"));
-    marker.setPosition(new LatLng(lat, long));
-    marker.setRotation(head + 90);
+
+      case "KAYAK":
+      case "MOKAI":
+        iconUrl = 'assets/imgs/kayak.png';
+
+        if (this.mapMarkers.get(name) == null) {
+          this.map.addMarker({
+            title: name,
+            label: name.slice(0, 1),
+            icon: iconUrl
+            //snippet: "some useful details here",
+            //animation: plugin.google.maps.Animation.BOUNCE
+          }).then((marker: Marker) => {
+            this.mapMarkers.set(name, marker);
+          });
+        }
+        let marker = this.mapMarkers.get(name);
+        if (marker == null) return; // There is a race condition with adding markers, so just ignore it for now
+        marker.setPosition(this.LocalGrid2LatLong(parseFloat(parsedMail.get("X")), parseFloat(parsedMail.get("Y"))));
+        marker.setRotation(parseFloat(parsedMail.get("HDG")) + 90);
+        break;
+    }
   }
 
 
   initializeMap() {
-    let mapOptions: GoogleMapOptions;
-
     this.storage.get("prefs.mapLocation").then((value) => {
-      mapOptions = {
+      switch (value) {
+        case "forest":
+        default:
+          this.latOrigin = 43.825300;
+          this.lonOrigin = -70.330400;
+          break;
+
+        case "mit":
+          this.latOrigin = 42.358456;
+          this.lonOrigin = -71.087589;
+          break;
+      }
+
+      this.map = GoogleMaps.create('map_canvas', {
         controls: {
           compass: true,
           myLocation: true,
@@ -65,23 +85,13 @@ export class MapPage {
         },
         camera: {
           zoom: 16,
-          tilt: 30
+          target: {lat: this.latOrigin, lng: this.lonOrigin}
         },
-        mapType: GoogleMapsMapTypeId.hybrid
-      };
-
-      switch (value) {
-        case "forest":
-        default:
-          mapOptions.camera.target = {lat: 43.825300, lng: -70.330400};
-          break;
-
-        case "mit":
-          mapOptions.camera.target = {lat: 42.358456, lng: -71.087589};
-          break;
-      }
-
-      this.map = GoogleMaps.create('map_canvas', mapOptions);
+        preferences: {
+          building: false
+        },
+        mapType: GoogleMapsMapTypeId.terrain
+      });
 
       // Wait the MAP_READY before using any methods.
       this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
@@ -94,11 +104,39 @@ export class MapPage {
     this.mm.newClientEmitter.subscribe((client: MoosClient) => {
       if (client == null) return;
       client.subscribe("NODE_REPORT");
+      client.subscribe("VIEW_MARKER");
       client.mailEmitter.subscribe((mail: MoosMail) => {
-        if (mail.name == "NODE_REPORT") {
-          this.updateMarkers(MoosmailProvider.parseString(mail.content));
+        switch (mail.name) {
+          case "NODE_REPORT":
+          case "VIEW_MARKER":
+            this.updateObjects(MoosmailProvider.parseString(mail.content.toUpperCase()));
+            break;
         }
       });
     });
+  }
+
+  // 🙇 https://github.com/moos-ivp/svn-mirror/blob/master/MOOS_Aug2815/MOOSGeodesy/libMOOSGeodesy/MOOSGeodesy.cpp#L235
+  LocalGrid2LatLong(dfEast: number, dfNorth: number) {
+    //(semimajor axis)
+    let dfa: number = 6378137;
+    // (semiminor axis)
+    let dfb: number = 6356752.314245;
+
+    let dftanlat2 = Math.pow(Math.tan( this.lonOrigin*DEG_TO_RAD), 2);
+    let dfRadius = dfb*Math.sqrt(1+dftanlat2) / Math.sqrt((Math.pow(dfb,2)/Math.pow(dfa,2))+dftanlat2);
+
+    //first calculate lat arc
+    let dfYArcRad = Math.asin(dfNorth/dfRadius); //returns result in rad
+    let dfYArcDeg = dfYArcRad * RAD_TO_DEG;
+
+    let dfXArcRad = Math.asin(dfEast/(dfRadius*Math.cos(this.latOrigin*DEG_TO_RAD)));
+    let dfXArcDeg = dfXArcRad * RAD_TO_DEG;
+
+    //add the origin to these arc lengths
+    let dfLat = dfYArcDeg + this.latOrigin;
+    let dfLon = dfXArcDeg + this.lonOrigin;
+
+    return {lat: dfLat, lng: dfLon};
   }
 }
