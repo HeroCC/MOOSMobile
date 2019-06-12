@@ -4,6 +4,7 @@ import {Storage} from "@ionic/storage";
 import {GoogleMap, GoogleMaps, GoogleMapsEvent, GoogleMapsMapTypeId, Marker} from "@ionic-native/google-maps";
 import {MoosmailProvider} from "../../providers/moosmail/moosmail";
 import {MoosClient, MoosMail} from "../../providers/moosmail/MoosClient";
+//import proj4 = require("proj4");
 
 const RAD_TO_DEG = 57.29577951308232;
 const DEG_TO_RAD = .0174532925199432958;
@@ -117,7 +118,7 @@ export class MapPage {
   }
 
   // 🙇 https://github.com/moos-ivp/svn-mirror/blob/master/MOOS_Aug2815/MOOSGeodesy/libMOOSGeodesy/MOOSGeodesy.cpp#L235
-  LocalGrid2LatLong(dfEast: number, dfNorth: number) {
+  LocalGrid2LatLong(dfEast: number, dfNorth: number, transform: boolean = true) {
     //(semimajor axis)
     let dfa: number = 6378137;
     // (semiminor axis)
@@ -136,6 +137,11 @@ export class MapPage {
     //add the origin to these arc lengths
     let dfLat = dfYArcDeg + this.latOrigin;
     let dfLon = dfXArcDeg + this.lonOrigin;
+
+    if (transform) {
+      //alert(dfLat + " " + dfLon);
+      //alert(proj4("WGS84", "GOOGLE").forward([dfLat, dfLon]));
+    }
 
     return {lat: dfLat, lng: dfLon};
   }
