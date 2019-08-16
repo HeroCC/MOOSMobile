@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      AppCasts
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card *ngFor="let node of getMapContentsAsArray(appcastContainer, true)">
+    <ion-card-header>
+      <ion-card-title>
+      {{node}}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item button *ngFor="let proc of getMapContentsAsArray(appcastContainer.get(node))" (click)="this.openAppcastDetailsPage(proc)">
+          <ion-label>
+            {{proc.procName}}
+            <ion-note>{{proc.timestamp | amTimeAgo}}</ion-note>
+            <p>
+              <span [ngStyle]="proc.configWarnings.length != 0 && {'color': '#f53d3d'}">CW: {{proc.configWarnings.length}}</span>,
+              <span [ngStyle]="proc.runWarnings.length != 0 && {'color': '#f53d3d'}">RW: {{proc.runWarnings.length}}</span>
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+

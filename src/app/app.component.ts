@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import {MoosmailService} from './services/moosmail/moosmail.service';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,14 @@ export class AppComponent {
     private statusBar: StatusBar
   ) {
     this.initializeApp();
+  }
+
+  toggleMoosUpdates() {
+    MoosmailService.pauseUpdates = !MoosmailService.pauseUpdates;
+  }
+
+  get pauseUpdates(): boolean {
+    return MoosmailService.pauseUpdates;
   }
 
   initializeApp() {

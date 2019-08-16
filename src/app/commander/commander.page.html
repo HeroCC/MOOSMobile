@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="add" (click)="addNewButton()"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Commander</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-card *ngFor="let button of this.buttons">
+    <ion-card-content>
+      <ion-list>
+        <ion-item-sliding>
+          <ion-item>
+            <div item-start>
+              <h2>
+                {{button.label}}
+              </h2>
+              <p>{{button.client.name}}: {{button.mail.name}}</p>
+            </div>
+
+            <ion-toggle *ngIf="button.inputType == 'boolean'" [checked]="!(button.mail.content != 'true')" [disabled]="button.readonly"
+                        (ionChange)="updateMailFromButton(button, !(button.mail.content.toLowerCase() == 'true'))"></ion-toggle>
+            <ion-input (keyup.enter)="updateMailFromButton(button, $event.target.value)"
+                       *ngIf="button.inputType != 'boolean'" [type]="button.inputType"
+                       [placeholder]="button.mail.content" [readonly]="button.readonly"></ion-input>
+          </ion-item>
+          <ion-item-options side="right">
+            <button ion-button color="danger" (click)="this.buttons.delete(button); saveButtonsList()">
+              <ion-icon name="trash"></ion-icon>
+              Remove
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Mail
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card *ngFor="let client of getMapValuesAsArray(this.mm.knownClients)">
+    <ion-card-header>
+      <ion-card-title [ngStyle]="client.ws.readyState != 1 && {'color': '#f53d3d'}">{{client.name}}</ion-card-title>
+      <ion-card-subtitle>{{client.ws.url || client.address}} <ion-icon name="lock" *ngIf="client.receivedMail.get('$IsAuthenticated') != null"></ion-icon></ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item-sliding *ngFor="let mail of getMapValuesAsArray(client.receivedMail)" [style]="mail.hiddenFromList == true && {'display': 'none'}">
+          <ion-item slot="start" (click)="mail.expandOnList = !mail.expandOnList">
+            <ion-label>
+              {{mail.name}}
+              <ion-note>
+                {{mail.timestamp | amTimeAgo}}
+              </ion-note>
+              <p>{{mail.content}}</p>
+
+            <ion-grid *ngIf="mail.expandOnList">
+              <ion-row *ngFor="let splitMail of mail.content.split(',')">
+                <ion-col size="3"><b>{{splitMail.split("=")[0]}}</b></ion-col>
+                <ion-col>{{splitMail.split("=")[1]}}</ion-col>
+              </ion-row>
+            </ion-grid>
+            </ion-label>
+          </ion-item>
+          <ion-item-options side="end">
+            <ion-item-option color="primary" (click)="this.editMailPrompt(client, mail.name)">
+              <ion-icon name="md-create"></ion-icon>
+              Edit
+            </ion-item-option>
+
+            <ion-item-option color="special" *ngIf="!mail.notifyOnUpdate" (click)="this.localNotification.requestPermission(); mail.notifyOnUpdate = !mail.notifyOnUpdate">
+              <ion-icon name="alert"></ion-icon>
+              Alert
+            </ion-item-option>
+            <ion-item-option color="special" *ngIf="mail.notifyOnUpdate" (click)="mail.notifyOnUpdate = !mail.notifyOnUpdate">
+              <ion-icon name="alert"></ion-icon>
+              Unalert
+            </ion-item-option>
+
+            <ion-item-option color="danger" (click)="mail.hiddenFromList = true">
+              <ion-icon name="trash"></ion-icon>
+              Hide
+            </ion-item-option>
+
+            <ion-item-option color="secondary" *ngIf="!client.savedMail.has(mail.name)" [disabled]="!client.isRemembered(this.mm)" (click)="client.savedMail.add(mail.name); client.remember(this.mm)">
+              <ion-icon name="archive"></ion-icon>
+              Save
+            </ion-item-option>
+            <ion-item-option color="warning" *ngIf="client.savedMail.has(mail.name)" (click)="client.savedMail.delete(mail.name); client.remember(mm)">
+              <ion-icon name="archive"></ion-icon>
+              Unsave
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-card-content>
+
+    <ion-row>
+      <ion-col>
+        <ion-button icon-left fill="clear" size="small" (click)="this.subscribeToNewMailPrompt(client)">
+          <ion-icon item-start name="add"></ion-icon>
+          Add more mail
+        </ion-button>
+      </ion-col>
+
+      <ion-col>
+        <ion-button icon-left fill="clear" size="small" (click)="client.remember(this.mm)" *ngIf="!client.isRemembered(this.mm)">
+          <ion-icon name="archive"></ion-icon>
+          Save
+        </ion-button>
+        <ion-button icon-left fill="clear" size="small" (click)="client.forget(this.mm)" *ngIf="client.isRemembered(this.mm)">
+          <ion-icon name="trash"></ion-icon>
+          Forget
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
+  <ion-card>
+    <ion-button fill="clear" expand="full" (click)="this.addNewClientPrompt()">
+      Add another client...
+      <ion-icon name="add"></ion-icon>
+    </ion-button>
+  </ion-card>
+</ion-content>

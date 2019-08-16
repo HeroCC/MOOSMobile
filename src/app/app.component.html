@@ -1,3 +1,10 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <ion-fab vertical="bottom" horizontal="start" style="margin-bottom: 4em">
+    <ion-fab-button (click)="this.toggleMoosUpdates()">
+      <ion-icon name="pause" *ngIf="!this.pauseUpdates"></ion-icon>
+      <ion-icon name="play" *ngIf="this.pauseUpdates"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-app>

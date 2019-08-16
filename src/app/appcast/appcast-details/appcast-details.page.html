@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      {{proc.nodeName}}
+      <ion-icon name="arrow-round-forward"></ion-icon>
+      {{proc.procName}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card>
+    <ion-card-content>
+      Last Updated: {{proc.timestamp | amUtc | amLocal | amDateFormat:'MM/DD/YYYY HH:mm:ss'}}
+      <ion-list>
+        <ion-item *ngIf="proc.configWarnings.length > 0">
+          <h2>Config Warnings</h2>
+          <pre>{{proc.configWarnings.join("\n")}}</pre>
+        </ion-item>
+        <ion-item *ngIf="proc.numberRunWarnings > 0">
+          <h2>Run Warnings</h2>
+          <pre>{{proc.runWarnings.join("\n")}}</pre>
+          <pre *ngIf="proc.numberRunWarnings > proc.runWarnings.length">And {{proc.numberRunWarnings - proc.runWarnings.length}} more</pre>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h1>Messages</h1>
+            <pre>{{proc.messages.join("\n")}}</pre>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-header>
+            <h1>Events</h1>
+            <pre>{{proc.events.join("\n")}}</pre>
+          </ion-header>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

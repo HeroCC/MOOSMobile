@@ -8,42 +8,60 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
+        path: 'map',
         children: [
           {
             path: '',
-            loadChildren: '../tab1/tab1.module#Tab1PageModule'
+            loadChildren: '../map/map.module#MapPageModule'
           }
         ]
       },
       {
-        path: 'tab2',
+        path: 'mail',
         children: [
           {
             path: '',
-            loadChildren: '../tab2/tab2.module#Tab2PageModule'
+            loadChildren: '../mail/mail.module#MailPageModule'
           }
         ]
       },
       {
-        path: 'tab3',
+        path: 'appcast',
         children: [
           {
             path: '',
-            loadChildren: '../tab3/tab3.module#Tab3PageModule'
+            loadChildren: '../appcast/appcast.module#AppcastPageModule'
+          }
+        ]
+      },
+      {
+        path: 'commander',
+        children: [
+          {
+            path: '',
+            loadChildren: '../commander/commander.module#CommanderPageModule'
+          }
+        ]
+      },
+      {
+        path: 'settings',
+        children: [
+          {
+            path: '',
+            loadChildren: '../settings/settings.module#SettingsPageModule'
           }
         ]
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/map',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/map',
     pathMatch: 'full'
   }
 ];

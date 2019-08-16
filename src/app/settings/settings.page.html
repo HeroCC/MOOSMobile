@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Settings
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form (ngSubmit)="saveSettings()" [formGroup]="prefs">
+    <ion-card>
+      <ion-card-header>
+        General
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>Map Location</ion-label>
+            <ion-select formControlName="mapLocation">
+              <ion-select-option value="forest">Forest Lake</ion-select-option>
+              <ion-select-option value="mit">MIT Pavilion</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Hidden Pages</ion-label>
+            <ion-select formControlName="disabledPages" multiple="true">
+              <ion-select-option value="map">Map</ion-select-option>
+              <ion-select-option value="mail">Mail</ion-select-option>
+              <ion-select-option value="appcast">AppCast</ion-select-option>
+              <ion-select-option value="buttons">Buttons</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Auto Update</ion-label>
+            <ion-toggle formControlName="autoUpdate" disabled></ion-toggle>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <br>
+    <ion-button expand="full" type="submit" [color]="!prefs.pristine && 'danger' || 'primary'" [disabled]="!prefs.valid">Save</ion-button>
+  </form>
+</ion-content>
