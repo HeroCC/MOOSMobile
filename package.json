@@ -61,7 +61,7 @@
     "minimist": "^1.2.0",
     "moment": "^2.22.1",
     "ngx-moment": "^2.0.0-rc.0",
-    "node-sass": "^4.9.0",
+    "node-sass": "^4.13.1",
     "phonegap-plugin-local-notification": "^1.0.1",
     "proj4": "^2.4.4",
     "reconnecting-websocket": "^3.2.2",
